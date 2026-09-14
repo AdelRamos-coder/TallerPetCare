@@ -4,7 +4,7 @@ using System.Text;
 
 namespace petcar
 {
-    internal class TipoMedicamento
+    public enum  TipoMedicamento
     {
         antiparasitarios, 
         antibióticos, 
