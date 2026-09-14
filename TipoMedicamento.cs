@@ -6,5 +6,9 @@ namespace petcar
 {
     internal class TipoMedicamento
     {
+        antiparasitarios, 
+        antibióticos, 
+        analgésicos,
+        vacunas
     }
 }
