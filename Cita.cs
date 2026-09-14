@@ -43,5 +43,51 @@ namespace TallerPetCare
             Motivo = motivo;
             Tarifa = tarifa;
         }
+
+        public int CalcularDiasFaltantes()
+        {
+            TimeSpan diferencia = FechaHora.Date - DateTime.Today;
+            return diferencia.Days;
+        }
+
+        public bool MarcarAtendida()
+        {
+            if (Estado == EstadoCita.Programada)
+            {
+                Estado = EstadoCita.Atendida;
+                return true;
+            }
+            return false;
+        }
+        public bool MarcarCancelada()
+        {
+            if (Estado == EstadoCita.Atendida)
+            {
+                return false;
+            }
+            if (Estado == EstadoCita.Cancelada)
+            {
+                return false;
+            }
+            Estado = EstadoCita.Cancelada;
+            return true;
+        }
+
+        public bool EstaVigente()
+        {
+            return Estado == EstadoCita.Programada && CalcularDiasFaltantes() >= 0;
+        }
+
+        public void MostrarFicha()
+        {
+            Console.WriteLine($"Numero:{Numero}");
+            Console.WriteLine($"Estado: {Estado}");
+            Console.WriteLine($"Nombre de la mascota: {NombreMascota}");
+            Console.WriteLine($"Cedula del cliente: {CedulaCliente}");
+            Console.WriteLine($"Veterinario: {Veterinario}");
+            Console.WriteLine($"Fecha:{FechaHora:dd/MM/yyyy HH:mm}");
+            Console.WriteLine($"Motivo: {Motivo}");
+            Console.WriteLine($"Tarifa: {Tarifa:C}");
+        }
     }
 }
