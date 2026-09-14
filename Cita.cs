@@ -1,6 +1,6 @@
 using System;
 
-namespace TallerPetCare
+namespace PetCar
 {
     public enum EstadoCita
     {
