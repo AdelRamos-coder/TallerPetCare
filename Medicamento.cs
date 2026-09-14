@@ -1,7 +1,6 @@
-using petcar;
 using System;
 
-namespace PetCare
+namespace PetCar
 {
     public class Medicamento
     {
