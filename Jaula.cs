@@ -4,13 +4,13 @@ namespace PetCar
 {
     public class Jaula
     {
-        public string Codigo { get; init; }
-        public TamanoJaula Tamano {  get; init; }
-        public decimal TarifaDia { get; set; }
+        private readonly string Codigo;
+        private readonly TamanoJaula Tamano;
+        private decimal TarifaDia;
 
-        public bool Ocupado { get; set; }
-        public string? NombreMascota { get; set; }
-        public int DiasEstancia { get; set; }
+        private bool Ocupado;
+        private string? NombreMascota;
+        private int DiasEstancia;
 
         public Jaula(string codigo, TamanoJaula tamano, decimal tarifaDia)
         {
