@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+
 
 namespace TallerPetcar
 {
@@ -144,17 +145,45 @@ namespace TallerPetcar
 
             jaula2.IngresarPaciente("Rocky");
             Console.WriteLine("\n[4] Meter a Nube en J-08, ocupada por Rocky");
-            jaula2.IngresarPaciente("Nube");
+            try
+            {
+                jaula2.IngresarPaciente("Nube");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"    Error: {ex.Message}");
+            }
 
             Console.WriteLine("\n[5] Recibir una cantidad negativa en MED-0315");
-            medicamento3.RecibirUnidades(-10);
+            try
+            {
+                medicamento3.RecibirUnidades(-10);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"    Error: {ex.Message}");
+            }
 
             Console.WriteLine("\n[6] Crear una cita con tarifa negativa");
-            Cita citaInvalida = new Cita(4, "Simba", "8001234", "Dr. Andres Zapata",
+            try
+            {
+                Cita citaInvalida = new Cita(4, "Simba", "8001234", "Dr. Andres Zapata",
                     new DateTime(2026, 10, 1, 10, 0, 0), "Consulta", -5000m);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"    Error: {ex.Message}");
+            }   
 
             Console.WriteLine("\n[7] Crear una jaula con tarifa en cero");
-            Jaula jaulaInvalida = new Jaula("J-99", TamanoJaula.Grande, 0m);
+            try
+            {
+                Jaula jaulaInvalida = new Jaula("J-99", TamanoJaula.Grande, 0m);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"    Error: {ex.Message}");
+            }
         }
 
         static void Resumen()

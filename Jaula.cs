@@ -37,7 +37,7 @@ namespace TallerPetcar
         {
             if (Ocupado)
             {
-                throw new InvalidOperationException(
+                throw new ArgumentException(
                 $"La jaula {Codigo} ya está ocupada por '{NombreMascota}'. " +
                 "No se puede ingresar otro paciente.");
             }
