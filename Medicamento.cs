@@ -4,18 +4,22 @@ namespace PetCar
 {
     public class Medicamento
     {
-        public const int STOCK_MINIMO = 10;
-        public string CodigoInterno { get; init; }
-        public  TipoMedicamento TipoMedicamento { get; set; }
-        public string NombreComercial { get; set; }
-        public string Presentacion { get; set; }
-        public decimal PrecioUnidad { get; set; }
-        public int StockActual { get; set; }
-        public DateTime FechaVencimiento { get; init; }
-        public bool EnNevera { get; set; } 
+        private const int STOCK_MINIMO = 10;
+        private readonly string CodigoInterno;
+        private readonly TipoMedicamento TipoMedicamento;
+        private string NombreComercial;
+        private string Presentacion;
+        private double PrecioUnidad;
+        private int StockActual;
+        private DateTime FechaVencimiento;
+        private bool EnNevera;
 
         public Medicamento(string codigoInterno, TipoMedicamento tipoMedicamento, string nombreComercial, string presentacion, decimal precioUnidad, int stockActual, DateTime fechaVencimiento, bool enNevera)
         {
+            if (string.IsNullOrEmpty(codigoInterno))
+            {
+                throw new ArgumentException("El codigo del medicamento es obligatorio.");
+            }
             CodigoInterno = codigoInterno;
             TipoMedicamento = tipoMedicamento;
             NombreComercial = nombreComercial;
