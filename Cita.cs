@@ -1,25 +1,19 @@
 using System;
 
-namespace PetCar
+namespace TallerPetcar
 {
-    public enum EstadoCita
-    {
-        Programada,
-        Atendida,
-        Cancelada
-    }
     public class Cita
     {
-        private readonly int Numero;
-        private string NombreMascota;
-        private  string CedulaCliente;
-        private string Veterinario;
-        private DateTime FechaHora;
-        private string Motivo;
-        private decimal Tarifa;
-        private EstadoCita Estado = EstadoCita.Programada;
+        public int Numero { get; private init; }
+        public string NombreMascota { get; private set; }
+        public string CedulaCliente { get; private set; }
+        public string Veterinario { get; private set; }
+        public DateTime FechaHora { get; private set; }
+        public string Motivo { get; private set; }
+        public decimal Tarifa { get; private set; }
+        public EstadoCita Estado { get; private set; } = EstadoCita.Programada;
 
-        // ─── Constructor ───
+        
         public Cita(int numero, string nombreMascota, string cedulaCliente, string veterinario, DateTime fechaHora, string motivo, decimal tarifa)
         {
             if (tarifa < 0)
@@ -90,4 +84,5 @@ namespace PetCar
             Console.WriteLine($"Tarifa: {Tarifa:C}");
         }
     }
+
 }
