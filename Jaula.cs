@@ -1,16 +1,16 @@
 using System;
 
-namespace PetCar
+namespace TallerPetcar
 {
     public class Jaula
     {
-        public string Codigo { get; init; }
-        public TamanoJaula Tamano {  get; init; }
-        public decimal TarifaDia { get; set; }
+        public string Codigo { get; private init; }
+        public TamanoJaula Tamano { get; private init; }
+        public decimal TarifaDia { get; private set; }
 
-        public bool Ocupado { get; set; }
-        public string? NombreMascota { get; set; }
-        public int DiasEstancia { get; set; }
+        public bool Ocupado { get; private set; }
+        public string? NombreMascota { get; private set; }
+        public int DiasEstancia { get; private set; }
 
         public Jaula(string codigo, TamanoJaula tamano, decimal tarifaDia)
         {
@@ -46,8 +46,8 @@ namespace PetCar
             {
                 throw new ArgumentException("Debe indicar el nombre del animal.");
 
-            }    
-            
+            }
+
             Ocupado = true;
             NombreMascota = nombreMascota;
             DiasEstancia = 0;
@@ -56,10 +56,10 @@ namespace PetCar
         public void SumarDiaEstancia()
         {
             if (!Ocupado)
-            {    
-                return; 
+            {
+                return;
             }
-       
+
 
             DiasEstancia++;
         }
@@ -96,6 +96,5 @@ namespace PetCar
 
             return $"Jaula {Codigo} [{Tamano}] - Tarifa: {TarifaDia:C}/día | LIBRE";
         }
-      
     }
 }

@@ -1,10 +1,10 @@
 using System;
 
-namespace PetCar
+namespace TallerPetcar
 {
     public enum TamanoJaula
     {
-        Pequeno, 
+        Pequeno,
         Mediano,
         Grande
     }
