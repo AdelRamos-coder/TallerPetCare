@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 
-namespace PetCar
+namespace TallerPetcar
 {
-    class Program
+    internal static class Program
     {
         static Medicamento medicamento1 = new Medicamento("MED-0142", TipoMedicamento.Antibioticos,
-            "Amoxivet 250", "Tableta 250 mg", 1800m, 8, new DateTime(2027, 5, 30), false);
+                "Amoxivet 250", "Tableta 250 mg", 1800m, 8, new DateTime(2027, 5, 30), false);
         static Medicamento medicamento2 = new Medicamento("MED-0207", TipoMedicamento.Vacunas,
-            "Rabivac", "Frasco 10 mL", 32000m, 25, new DateTime(2026, 11, 15), true);
+            "Rabivac", "Frasco 10 mL", 32000m  , 25, new DateTime(2026, 11, 15), true);
         static Medicamento medicamento3 = new Medicamento("MED-0315", TipoMedicamento.Antiparasitarios,
             "Drontal Plus", "Tableta 700 mg", 9500m, 40, new DateTime(2026, 3, 10), false);
 
@@ -20,7 +20,7 @@ namespace PetCar
 
         static Jaula jaula1 = new Jaula("J-07", TamanoJaula.Pequeno, 25000m);
         static Jaula jaula2 = new Jaula("J-08", TamanoJaula.Mediano, 38000m);
-        static Jaula jaula3 = new Jaula("J-12", TamanoJaula.Grande, 52000m);
+        static Jaula jaula3 = new Jaula("J-12", TamanoJaula.Grande, 52000m); 
 
         static void Main()
         {
@@ -108,8 +108,8 @@ namespace PetCar
         static void Hospitalizacion()
         {
             Console.WriteLine("---------- HOSPITALIZACION ----------");
-            Ingresar(jaula1, "Manchas");
-            Ingresar(jaula2, "Rocky");
+            jaula1.IngresarPaciente("Manchas");
+            jaula2.IngresarPaciente("Rocky");
 
             jaula1.SumarDiaEstancia();
             jaula1.SumarDiaEstancia();
@@ -121,25 +121,11 @@ namespace PetCar
             Console.WriteLine(jaula2.ConsultarEstado());
             Console.WriteLine(jaula3.ConsultarEstado());
 
-            if (jaula1.Ocupado)
-            {
-                Console.WriteLine($"Alta de Manchas | Total a cobrar: {jaula1.DarDeAltaMedica():C}");
-                Console.WriteLine(jaula1.ConsultarEstado());
-            }
+            Console.WriteLine($"Alta de Manchas | Total a cobrar: {jaula1.DarDeAltaMedica():C}");
+            Console.WriteLine(jaula1.ConsultarEstado());
         }
 
-        static void Ingresar(Jaula jaula, string nombreMascota)
-        {
-            try
-            {
-                jaula.IngresarPaciente(nombreMascota);
-                Console.WriteLine(jaula.ConsultarEstado());
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine($"Rechazado por la clase: {ex.Message}");
-            }
-        }
+        
 
         static void CasosProhibidos()
         {
@@ -156,40 +142,19 @@ namespace PetCar
             Console.WriteLine($"\n[3] Cancelar la cita 3 que ya esta {cita3.Estado}");
             Console.WriteLine($"    Resultado: {cita3.MarcarCancelada()}");
 
-            Ingresar(jaula2, "Rocky");
+            jaula2.IngresarPaciente("Rocky");
             Console.WriteLine("\n[4] Meter a Nube en J-08, ocupada por Rocky");
-            Ingresar(jaula2, "Nube");
+            jaula2.IngresarPaciente("Nube");
 
             Console.WriteLine("\n[5] Recibir una cantidad negativa en MED-0315");
-            try
-            {
-                medicamento3.RecibirUnidades(-10);
-            }
-            catch (ArgumentException ex)
-            {
-                Console.WriteLine($"    Bloqueado por la clase: {ex.Message}");
-            }
+            medicamento3.RecibirUnidades(-10);
 
             Console.WriteLine("\n[6] Crear una cita con tarifa negativa");
-            try
-            {
-                Cita citaInvalida = new Cita(4, "Simba", "8001234", "Dr. Andres Zapata",
+            Cita citaInvalida = new Cita(4, "Simba", "8001234", "Dr. Andres Zapata",
                     new DateTime(2026, 10, 1, 10, 0, 0), "Consulta", -5000m);
-            }
-            catch (ArgumentException ex)
-            {
-                Console.WriteLine($"    Bloqueado por la clase: {ex.Message}");
-            }
 
             Console.WriteLine("\n[7] Crear una jaula con tarifa en cero");
-            try
-            {
-                Jaula jaulaInvalida = new Jaula("J-99", TamanoJaula.Grande, 0m);
-            }
-            catch (ArgumentException ex)
-            {
-                Console.WriteLine($"    Bloqueado por la clase: {ex.Message}");
-            }
+            Jaula jaulaInvalida = new Jaula("J-99", TamanoJaula.Grande, 0m);
         }
 
         static void Resumen()
