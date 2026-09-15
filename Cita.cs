@@ -84,5 +84,4 @@ namespace TallerPetcar
             Console.WriteLine($"Tarifa: {Tarifa:C}");
         }
     }
-
 }
