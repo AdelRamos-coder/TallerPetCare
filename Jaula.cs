@@ -19,7 +19,7 @@ namespace PetCar
                 throw new ArgumentException("El codigo de la jaula es obligatorio.");
             }
 
-            if (TarifaDia <= 0)
+            if (tarifaDia <= 0)
             {
                 throw new ArgumentException("La tarifa por dia debe ser mayor a cero.");
             }
