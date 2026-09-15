@@ -9,7 +9,7 @@ namespace PetCar
         private readonly TipoMedicamento TipoMedicamento;
         private string NombreComercial;
         private string Presentacion;
-        private double PrecioUnidad;
+        private decimal PrecioUnidad;
         private int StockActual;
         private DateTime FechaVencimiento;
         private bool EnNevera;
