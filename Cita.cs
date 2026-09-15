@@ -10,14 +10,14 @@ namespace PetCar
     }
     public class Cita
     {
-        public int Numero { get; init; }
-        public string NombreMascota { get; set; }
-        public string CedulaCliente { get; set; }
-        public string Veterinario { get; set; }
-        public DateTime FechaHora { get; set; }
-        public string Motivo { get; set; }
-        public decimal Tarifa { get; set; }
-        public EstadoCita Estado { get; private set; } = EstadoCita.Programada;
+        private readonly int Numero;
+        private string NombreMascota;
+        private  string CedulaCliente;
+        private string Veterinario;
+        private DateTime FechaHora;
+        private string Motivo;
+        private decimal Tarifa;
+        private EstadoCita Estado = EstadoCita.Programada;
 
         // ─── Constructor ───
         public Cita(int numero, string nombreMascota, string cedulaCliente, string veterinario, DateTime fechaHora, string motivo, decimal tarifa)
