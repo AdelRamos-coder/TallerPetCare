@@ -1,11 +1,11 @@
 using System;
 
-namespace PetCar
+namespace TallerPetcar
 {
-    public enum  TipoMedicamento
+    public enum TipoMedicamento
     {
-        Antiparasitarios, 
-        Antibioticos, 
+        Antiparasitarios,
+        Antibioticos,
         Analgesicos,
         Vacunas
     }
