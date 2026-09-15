@@ -6,9 +6,9 @@ namespace PetCar
 {
     public enum  TipoMedicamento
     {
-        antiparasitarios, 
-        antibióticos, 
-        analgésicos,
-        vacunas
+        Antiparasitarios, 
+        Antibioticos, 
+        Analgesicos,
+        Vacunas
     }
 }

@@ -4,7 +4,7 @@ namespace PetCar
 {
     public class Jaula
     {
-        public required string Codigo { get; init; }
+        public string Codigo { get; init; }
         public TamanoJaula Tamano {  get; init; }
         public decimal TarifaDia { get; set; }
 

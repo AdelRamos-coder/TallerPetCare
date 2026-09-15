@@ -4,8 +4,8 @@ namespace PetCar
 {
     public enum TamanoJaula
     {
-        pequeno, 
-        mediano,
-        grande
+        Pequeno, 
+        Mediano,
+        Grande
     }
 }
