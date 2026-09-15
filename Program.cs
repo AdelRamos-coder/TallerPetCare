@@ -1,14 +1,13 @@
 ﻿using System;
 
-
 namespace TallerPetcar
 {
     internal static class Program
     {
         static Medicamento medicamento1 = new Medicamento("MED-0142", TipoMedicamento.Antibioticos,
-                "Amoxivet 250", "Tableta 250 mg", 1800m, 8, new DateTime(2027, 5, 30), false);
+            "Amoxivet 250", "Tableta 250 mg", 1800m, 8, new DateTime(2027, 5, 30), false);
         static Medicamento medicamento2 = new Medicamento("MED-0207", TipoMedicamento.Vacunas,
-            "Rabivac", "Frasco 10 mL", 32000m  , 25, new DateTime(2026, 11, 15), true);
+            "Rabivac", "Frasco 10 mL", 32000m, 25, new DateTime(2026, 11, 15), true);
         static Medicamento medicamento3 = new Medicamento("MED-0315", TipoMedicamento.Antiparasitarios,
             "Drontal Plus", "Tableta 700 mg", 9500m, 40, new DateTime(2026, 3, 10), false);
 
@@ -21,7 +20,7 @@ namespace TallerPetcar
 
         static Jaula jaula1 = new Jaula("J-07", TamanoJaula.Pequeno, 25000m);
         static Jaula jaula2 = new Jaula("J-08", TamanoJaula.Mediano, 38000m);
-        static Jaula jaula3 = new Jaula("J-12", TamanoJaula.Grande, 52000m); 
+        static Jaula jaula3 = new Jaula("J-12", TamanoJaula.Grande, 52000m);
 
         static void Main()
         {
@@ -109,8 +108,15 @@ namespace TallerPetcar
         static void Hospitalizacion()
         {
             Console.WriteLine("---------- HOSPITALIZACION ----------");
-            jaula1.IngresarPaciente("Manchas");
-            jaula2.IngresarPaciente("Rocky");
+
+            if (!jaula1.Ocupado)
+            {
+                jaula1.IngresarPaciente("Manchas");
+            }
+            if (!jaula2.Ocupado)
+            {
+                jaula2.IngresarPaciente("Rocky");
+            }
 
             jaula1.SumarDiaEstancia();
             jaula1.SumarDiaEstancia();
@@ -125,8 +131,6 @@ namespace TallerPetcar
             Console.WriteLine($"Alta de Manchas | Total a cobrar: {jaula1.DarDeAltaMedica():C}");
             Console.WriteLine(jaula1.ConsultarEstado());
         }
-
-        
 
         static void CasosProhibidos()
         {
@@ -143,7 +147,10 @@ namespace TallerPetcar
             Console.WriteLine($"\n[3] Cancelar la cita 3 que ya esta {cita3.Estado}");
             Console.WriteLine($"    Resultado: {cita3.MarcarCancelada()}");
 
-            jaula2.IngresarPaciente("Rocky");
+            if (!jaula2.Ocupado)
+            {
+                jaula2.IngresarPaciente("Rocky");
+            }
             Console.WriteLine("\n[4] Meter a Nube en J-08, ocupada por Rocky");
             try
             {
@@ -173,7 +180,7 @@ namespace TallerPetcar
             catch (ArgumentException ex)
             {
                 Console.WriteLine($"    Error: {ex.Message}");
-            }   
+            }
 
             Console.WriteLine("\n[7] Crear una jaula con tarifa en cero");
             try
@@ -212,15 +219,15 @@ namespace TallerPetcar
 
         static string TextoDias(int dias)
         {
-        if (dias > 0)
-        {
-            return $"faltan {dias} dias";
-        }
-        if (dias == 0)
-        {
-            return "es hoy";
-        }
-        return $"ya pasaron {Math.Abs(dias)} dias";
+            if (dias > 0)
+            {
+                return $"faltan {dias} dias";
+            }
+            if (dias == 0)
+            {
+                return "es hoy";
+            }
+            return $"ya pasaron {Math.Abs(dias)} dias";
         }
     }
 }

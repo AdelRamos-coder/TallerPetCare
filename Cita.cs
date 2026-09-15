@@ -2,6 +2,11 @@ using System;
 
 namespace TallerPetcar
 {
+    /// <summary>
+    /// Representa una consulta agendada en la recepcion de la clinica: quien la
+    /// trae, que mascota, con que veterinario, cuando y por cuanto
+    /// Controla el ciclo de estados Programada - Atendida - Cancelada
+    /// </summary>
     public class Cita
     {
         public int Numero { get; private init; }
@@ -13,7 +18,6 @@ namespace TallerPetcar
         public decimal Tarifa { get; private set; }
         public EstadoCita Estado { get; private set; } = EstadoCita.Programada;
 
-        
         public Cita(int numero, string nombreMascota, string cedulaCliente, string veterinario, DateTime fechaHora, string motivo, decimal tarifa)
         {
             if (tarifa < 0)
@@ -38,12 +42,22 @@ namespace TallerPetcar
             Tarifa = tarifa;
         }
 
+        /// <summary>
+        /// Dias que faltan para la cita
+        /// Devuelve 0 si es hoy y un numero negativo si la fecha ya paso,
+        /// el signo distingue los dos casos
+        /// </summary>
         public int CalcularDiasFaltantes()
         {
             TimeSpan diferencia = FechaHora.Date - DateTime.Today;
             return diferencia.Days;
         }
 
+        /// <summary>
+        /// Marca la cita como atendida
+        /// Devuelve false si ya no estaba programada, para que el sistema avise
+        /// en vez de hacerlo callado
+        /// </summary>
         public bool MarcarAtendida()
         {
             if (Estado == EstadoCita.Programada)
@@ -53,6 +67,12 @@ namespace TallerPetcar
             }
             return false;
         }
+
+        /// <summary>
+        /// Cancela la cita
+        /// Rechaza cancelar una ya atendida porque se perderia la factura,
+        /// y rechaza cancelar dos veces la misma cita
+        /// </summary>
         public bool MarcarCancelada()
         {
             if (Estado == EstadoCita.Atendida)
@@ -67,6 +87,10 @@ namespace TallerPetcar
             return true;
         }
 
+        /// <summary>
+        /// Una cita sigue en pie si esta programada y su fecha no ha pasado
+        /// La cita de hoy cuenta como vigente
+        /// </summary>
         public bool EstaVigente()
         {
             return Estado == EstadoCita.Programada && CalcularDiasFaltantes() >= 0;
