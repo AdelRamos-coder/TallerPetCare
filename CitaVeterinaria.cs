@@ -45,7 +45,7 @@ namespace PetCare
 
         public override string ObtenerDescripcion()
         {
-            return $"Consulta - {base.ObtenerDescripcion()} - {Fecha:dd/MM/yyyy HH:mm} - {Veterinario ?? "Sin veterinario"}";
+            return $"Consulta – {base.ObtenerDescripcion()} – {Fecha:dd/MM/yyyy HH:mm} – {Veterinario ?? "Sin veterinario"}";
         }
     }
 }

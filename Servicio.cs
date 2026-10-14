@@ -1,6 +1,6 @@
 namespace PetCare
 {
-    public abstract class Servicio
+    public abstract class Servicio : IFacturable
     {
         public string Codigo { get; }
         public string NombreMascota { get; }
@@ -27,6 +27,19 @@ namespace PetCare
         public virtual string ObtenerDescripcion()
         {
             return NombreMascota;
+        }
+
+        public decimal ObtenerPrecioUnitario()
+        {
+            return CalcularCosto();
+        }
+
+        public void ValidarFacturacion(int cantidad)
+        {
+            if (cantidad != 1)
+            {
+                throw new ArgumentException("Un servicio siempre se cobra como una unidad");
+            }
         }
     }
 }

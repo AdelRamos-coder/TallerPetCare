@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 
 namespace PetCare
 {
@@ -6,6 +7,7 @@ namespace PetCare
     {
         static void Main()
         {
+            Console.OutputEncoding = Encoding.UTF8;
             CultureInfo.CurrentCulture = new CultureInfo("es-CO");
 
             MostrarBienvenida();

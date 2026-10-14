@@ -44,7 +44,7 @@ namespace PetCare
 
         public override string ObtenerDescripcion()
         {
-            return $"Hospitalizacion - {base.ObtenerDescripcion()} - {CalcularDias()} dias";
+            return $"Hospitalizacion – {base.ObtenerDescripcion()} – {CalcularDias()} dias";
         }
     }
 }
