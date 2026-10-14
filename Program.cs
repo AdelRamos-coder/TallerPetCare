@@ -9,7 +9,7 @@ namespace PetCare
         {
             Console.OutputEncoding = Encoding.UTF8;
             CultureInfo.CurrentCulture = new CultureInfo("es-CO");
-
+           
             MostrarBienvenida();
             MenuPrincipal();
             MostrarDespedida();
@@ -73,6 +73,7 @@ namespace PetCare
                 Console.WriteLine("4. Casos que no pueden pasar");
                 Console.WriteLine("5. Resumen de las tres areas");
                 Console.WriteLine("6. Pruebas de LoteMedicamento");
+                Console.WriteLine("7. Demostracion PetCare");
                 Console.WriteLine("0. Salir");
                 Console.Write("Opcion: ");
 
@@ -87,6 +88,7 @@ namespace PetCare
                     case "4": CasosProhibidos(); break;
                     case "5": Resumen(); break;
                     case "6": PruebasLoteMedicamento.EjecutarTodas(); break;
+                    case "7": DemostracionPetCare(); break;
                     case "0": break;
                     default: Console.WriteLine("Opcion no valida"); break;
                 }
@@ -254,6 +256,98 @@ namespace PetCare
             {
                 Console.WriteLine("  " + jaula.ConsultarEstado());
             }
+        }
+        static void DemostracionPetCare()
+        {
+            Console.WriteLine("*****Demostracion*****");
+            //Cita 45min
+            Console.WriteLine("**Consulta de 45 minutos**");
+            CitaVeterinaria consulta = new CitaVeterinaria("CIT-009", "Rambo", DateTime.Today.AddHours(10), 45);
+            bool veterinarioConfirmado = consulta.ConfirmarVeterinario("Dr. Mengueche");
+            Console.WriteLine($"Veterinario confirmado: {veterinarioConfirmado}");
+            Console.WriteLine(consulta.ObtenerDescripcion());
+            Console.WriteLine($"Costo de la consulta: {consulta.CalcularCosto():C}");
+            Console.WriteLine();
+            //Hospitalizacion hace 3 dias
+            Console.WriteLine("**Hospitalizacion de 3 dias **");
+            Hospitalizacion hospitalizacion = new Hospitalizacion("HOS-132", "Trico", DateTime.Today.AddDays(-3), 80000m);
+            bool altaDada = hospitalizacion.DarDeAlta(DateTime.Today);
+            Console.WriteLine($"Alta registrada: :{altaDada}");
+            Console.WriteLine(hospitalizacion.ObtenerDescripcion());
+            Console.WriteLine($"Costo de la hospitalizacion: {hospitalizacion.CalcularCosto():C}");
+            Console.WriteLine();
+
+            //Lotes vencidos y no vencidos
+            Console.WriteLine("**Lotes de medicamento**");
+            DateOnly hoy = new DateOnly(DateTime.Today.Year,DateTime.Today.Month, DateTime.Today.Day);
+
+            LoteMedicamento loteActivo = new LoteMedicamento("L-203", "Amoxicilina 500 mg", hoy.AddMonths(6), 2500m);
+            LoteMedicamento loteVencido = new LoteMedicamento("L-118", "Meloxicam 1 mg", hoy.AddDays(-1), 1800m);
+            Console.WriteLine($"{loteActivo.ObtenerDescripcion()} | vencido: {loteActivo.EstaVencido()}");
+            Console.WriteLine($"{loteVencido.ObtenerDescripcion()} | vencido: {loteVencido.EstaVencido()}");
+            Console.WriteLine();
+
+           
+            Console.WriteLine("**Factura alargada**");
+            // Crear factura y agregar consulta, hospitalizacion y 2 unidades del lote vigente
+            Factura factura = new Factura("FAC-1001", DateTime.Today, "Ivan");
+            factura.Agregar(consulta);
+            factura.Agregar(hospitalizacion);
+            // Agregar lote vigente sólo si no está vencido
+            if (loteActivo.EstaVencido())
+            {
+                Console.WriteLine($"No se agregó {loteActivo.ObtenerDescripcion()}: el lote está vencido.");
+            }
+            else
+            {
+                factura.Agregar(loteActivo, 2);
+            }
+            Console.WriteLine();
+
+            // Imprimir renglones y total
+            Console.WriteLine("**Imprimir renglones y total**");
+            foreach (var renglon in factura.Renglones)
+            {
+                Console.WriteLine($"- {renglon.Descripcion} | Cantidad: {renglon.Cantidad} | Subtotal: {renglon.Subtotal:C}");
+            }
+            Console.WriteLine($"Total factura: {factura.Total:C}");
+            Console.WriteLine();
+
+            // Intento de facturar lote vencido 
+            Console.WriteLine("**Intento de facturar lote vencido**");
+            Factura facturaIntento = new Factura("FAC-1001-V", DateTime.Today, "Ivan");
+            if (loteVencido.EstaVencido())
+            {
+                Console.WriteLine($"  No se pudo agregar el lote: {loteVencido.ObtenerDescripcion()} venció el {loteVencido.FechaVencimiento:dd/MM/yyyy}.");
+            }
+            Console.WriteLine();
+            
+            // Anular la factura y demostrar que ya no se pueden agregar renglones
+            Console.WriteLine("**Anular factura**");
+            bool anulada = factura.Anular();
+            Console.WriteLine($"Factura anulada: {anulada}");
+            Console.WriteLine("Intento de agregar otro renglón tras anulación:");
+            if (factura.Anulada)
+            {
+                Console.WriteLine("  No se pudo agregar renglón: la factura está anulada.");
+            }
+            else
+            {
+                factura.Agregar(loteActivo, 1);
+            }
+            Console.WriteLine();
+
+            //Factura nueva con la misma consulta y mostrar que se puede facturar de nuevo
+            Console.WriteLine("**Factura con la misma consulta**");
+            Factura nuevaFactura = new Factura("FAC-1002", DateTime.Today, "Ivan");
+            nuevaFactura.Agregar(consulta);
+            Console.WriteLine("  Consulta agregada a la nueva factura:");
+            foreach (var renglon in nuevaFactura.Renglones)
+            {
+                Console.WriteLine($"  - {renglon.Descripcion} | Cantidad: {renglon.Cantidad} | Subtotal: {renglon.Subtotal:C}");
+            }
+            Console.WriteLine($"  Total nueva factura: {nuevaFactura.Total:C}");
+
         }
     }
 }
