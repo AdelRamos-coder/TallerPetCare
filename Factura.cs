@@ -59,6 +59,7 @@ namespace PetCare
             item.ValidarFacturacion(cantidad);
  
             _renglones.Add(new RenglonFactura(
+                item,
                 item.ObtenerDescripcion(),
                 cantidad,
                 item.ObtenerPrecioUnitario() * cantidad));
