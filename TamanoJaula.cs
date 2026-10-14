@@ -1,6 +1,4 @@
-using System;
-
-namespace TallerPetcar
+namespace PetCare
 {
     public enum TamanoJaula
     {
