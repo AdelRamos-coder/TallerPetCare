@@ -26,16 +26,13 @@ namespace PetCare
             };
         }
 
-        static Cita[] CrearCitas()
+        static CitaVeterinaria[] CrearCitas()
         {
             return new[]
             {
-                new Cita(1, "Manchas", "1036458721", "Dra. Lina Restrepo",
-                    DateTime.Today.AddDays(5).AddHours(9.5), "Vacunacion anual", 45000m),
-                new Cita(2, "Rocky", "43125890", "Dr. Andres Zapata",
-                    DateTime.Today.AddDays(1).AddHours(14), "Control posoperatorio", 60000m),
-                new Cita(3, "Luna", "71234567", "Dra. Lina Restrepo",
-                    DateTime.Today.AddDays(-3).AddHours(8), "Urgencia", 120000m)
+                new CitaVeterinaria("CIT-001", "Manchas", DateTime.Today.AddDays(5).AddHours(9.5)),
+                new CitaVeterinaria("CIT-002", "Rocky", DateTime.Today.AddDays(1).AddHours(14), 45),
+                new CitaVeterinaria("CIT-003", "Luna", DateTime.Today.AddDays(-3).AddHours(8), 90)
             };
         }
 
@@ -122,13 +119,15 @@ namespace PetCare
         static void AreaRecepcion()
         {
             Console.WriteLine("---------- RECEPCION ----------");
-            Cita[] citas = CrearCitas();
+            CitaVeterinaria[] citas = CrearCitas();
 
-            Console.WriteLine(citas[0].ObtenerFicha());
-            Console.WriteLine($"\nCita 1 {TextoDias(citas[0].CalcularDiasFaltantes())} | vigente: {citas[0].EstaVigente()}");
-            Console.WriteLine($"Cita 3 {TextoDias(citas[2].CalcularDiasFaltantes())} | vigente: {citas[2].EstaVigente()}");
-            Console.WriteLine($"Atender cita 2: {citas[1].MarcarAtendida()} | Estado: {citas[1].Estado}");
-            Console.WriteLine($"Cancelar cita 3: {citas[2].MarcarCancelada()} | Estado: {citas[2].Estado}");
+            Console.WriteLine($"Confirmar veterinario cita 1: {citas[0].ConfirmarVeterinario("Dra. Lina Restrepo")}");
+            Console.WriteLine($"Confirmar de nuevo cita 1: {citas[0].ConfirmarVeterinario("Dr. Andres Zapata")}");
+
+            foreach (CitaVeterinaria cita in citas)
+            {
+                Console.WriteLine($"{cita.Codigo} | {cita.ObtenerDescripcion()} | {cita.DuracionMinutos} min | {cita.CalcularCosto():C0}");
+            }
         }
 
         static void AreaHospitalizacion()
@@ -157,7 +156,7 @@ namespace PetCare
         {
             Console.WriteLine("---------- CASOS QUE NO PUEDEN PASAR ----------");
             Medicamento[] medicamentos = CrearMedicamentos();
-            Cita[] citas = CrearCitas();
+            CitaVeterinaria[] citas = CrearCitas();
             Jaula[] jaulas = CrearJaulas();
 
             Console.WriteLine($"\n[1] Despachar 200 de MED-0142 (hay {medicamentos[0].StockActual})");
@@ -166,13 +165,19 @@ namespace PetCare
             Console.WriteLine($"\n[2] Despachar 1 unidad de MED-0315, vencido el {medicamentos[2].FechaVencimiento:dd/MM/yyyy}");
             Console.WriteLine($"    Resultado: {medicamentos[2].DespacharUnidades(1)} | Stock intacto: {medicamentos[2].StockActual}");
 
-            citas[1].MarcarAtendida();
-            Console.WriteLine($"\n[3] Cancelar la cita 2 que esta {citas[1].Estado}");
-            Console.WriteLine($"    Resultado: {citas[1].MarcarCancelada()} | Sigue {citas[1].Estado}");
+            citas[1].ConfirmarVeterinario("Dr. Andres Zapata");
+            Console.WriteLine($"\n[3] Reasignar veterinario en la cita 2 que ya tiene {citas[1].Veterinario}");
+            Console.WriteLine($"    Resultado: {citas[1].ConfirmarVeterinario("Dra. Lina Restrepo")} | Sigue {citas[1].Veterinario}");
 
-            citas[2].MarcarCancelada();
-            Console.WriteLine($"\n[4] Cancelar la cita 3 que ya esta {citas[2].Estado}");
-            Console.WriteLine($"    Resultado: {citas[2].MarcarCancelada()}");
+            Console.WriteLine("\n[4] Crear una cita de 10 minutos");
+            try
+            {
+                new CitaVeterinaria("CIT-004", "Nube", DateTime.Today, 10);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"    Error: {ex.Message}");
+            }
 
             jaulas[1].IngresarPaciente("Rocky");
             Console.WriteLine("\n[5] Meter a Nube en J-08, ocupada por Rocky");
@@ -195,11 +200,10 @@ namespace PetCare
                 Console.WriteLine($"    Error: {ex.Message}");
             }
 
-            Console.WriteLine("\n[7] Crear una cita con tarifa negativa");
+            Console.WriteLine("\n[7] Dar de alta antes del ingreso");
             try
             {
-                new Cita(4, "Simba", "8001234", "Dr. Andres Zapata",
-                    DateTime.Today.AddDays(2), "Consulta", -5000m);
+                new Hospitalizacion("HOS-001", "Simba", DateTime.Today, 50000m).DarDeAlta(DateTime.Today.AddDays(-1));
             }
             catch (ArgumentException ex)
             {
@@ -221,7 +225,7 @@ namespace PetCare
         {
             Console.WriteLine("---------- RESUMEN DE LAS TRES AREAS ----------");
             Medicamento[] medicamentos = CrearMedicamentos();
-            Cita[] citas = CrearCitas();
+            CitaVeterinaria[] citas = CrearCitas();
             Jaula[] jaulas = CrearJaulas();
 
             decimal valorTotal = 0m;
@@ -238,10 +242,9 @@ namespace PetCare
             }
 
             Console.WriteLine("RECEPCION");
-            foreach (Cita cita in citas)
+            foreach (CitaVeterinaria cita in citas)
             {
-                Console.WriteLine($"  Cita {cita.Numero}: {cita.Estado} | vigente: {cita.EstaVigente()} | " +
-                    $"{TextoDias(cita.CalcularDiasFaltantes())} | tarifa {cita.Tarifa:C0}");
+                Console.WriteLine($"  {cita.Codigo}: {cita.ObtenerDescripcion()} | costo {cita.CalcularCosto():C0}");
             }
 
             Console.WriteLine("HOSPITALIZACION");
@@ -249,19 +252,6 @@ namespace PetCare
             {
                 Console.WriteLine("  " + jaula.ConsultarEstado());
             }
-        }
-
-        static string TextoDias(int dias)
-        {
-            if (dias > 0)
-            {
-                return $"faltan {dias} dias";
-            }
-            if (dias == 0)
-            {
-                return "es hoy";
-            }
-            return $"ya pasaron {Math.Abs(dias)} dias";
         }
     }
 }
