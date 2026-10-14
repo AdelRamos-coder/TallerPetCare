@@ -171,3 +171,6 @@ Cuando se suban las clases de los demás, el diagrama va a crecer así:
 | `Medicamento` | No se despacha si está vencido, si la cantidad es 0 o si supera el stock |
 | `Cita` | Solo una cita programada se puede atender o cancelar |
 | `Jaula` | No entra un segundo paciente a una jaula ocupada; se cobra mínimo un día |
+
+
+PostData Toledo es cacorro
