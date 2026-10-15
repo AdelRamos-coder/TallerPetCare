@@ -27,9 +27,20 @@ namespace PetCare
             Console.WriteLine($"  Costo de la consulta: {consulta.CalcularCosto():C0}");
 
             Console.WriteLine("\n[2] Hospitalizacion que ingreso hace 3 dias, alta hoy");
-            Hospitalizacion hospitalizacion = new Hospitalizacion("HOS-132", "Trico", DateTime.Today.AddDays(-3), 80000m);
+            Jaula jaula = new Jaula("J-07", TamanoJaula.Mediano, 80000m);
+            Hospitalizacion hospitalizacion = new Hospitalizacion("HOS-132", "Trico", DateTime.Today.AddDays(-3), jaula);
+            Console.WriteLine($"  Al ingresar: {jaula.ConsultarEstado()}");
+            try
+            {
+                new Hospitalizacion("HOS-133", "Nube", DateTime.Today, jaula);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"  Otro animal en la misma jaula: {ex.Message}");
+            }
             bool altaDada = hospitalizacion.DarDeAlta(DateTime.Today);
             Console.WriteLine($"  Alta registrada: {altaDada}");
+            Console.WriteLine($"  Despues del alta: {jaula.ConsultarEstado()}");
             Console.WriteLine($"  {hospitalizacion.ObtenerDescripcion()}");
             Console.WriteLine($"  Costo de la hospitalizacion: {hospitalizacion.CalcularCosto():C0}");
 

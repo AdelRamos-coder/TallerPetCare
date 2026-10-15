@@ -2,18 +2,19 @@ namespace PetCare
 {
     public class Hospitalizacion : Servicio
     {
+        public Jaula Jaula { get; }
         public decimal TarifaDiaria { get; }
         public DateTime? FechaAlta { get; private set; }
 
-        public Hospitalizacion(string codigo, string nombreMascota, DateTime fechaIngreso, decimal tarifaDiaria)
+        public Hospitalizacion(string codigo, string nombreMascota, DateTime fechaIngreso, Jaula jaula)
             : base(codigo, nombreMascota, fechaIngreso)
         {
-            if (tarifaDiaria <= 0)
-            {
-                throw new ArgumentException("La tarifa diaria debe ser mayor que cero");
-            }
+            ArgumentNullException.ThrowIfNull(jaula);
 
-            TarifaDiaria = tarifaDiaria;
+            jaula.IngresarPaciente(NombreMascota);
+
+            Jaula = jaula;
+            TarifaDiaria = jaula.TarifaDia;
         }
 
         public bool DarDeAlta(DateTime fechaAlta)
@@ -28,6 +29,7 @@ namespace PetCare
             }
 
             FechaAlta = fechaAlta;
+            Jaula.Liberar();
             return true;
         }
 

@@ -8,7 +8,6 @@ namespace PetCare
 
         public bool Ocupado { get; private set; }
         public string? NombreMascota { get; private set; }
-        public int DiasEstancia { get; private set; }
 
         public Jaula(string codigo, TamanoJaula tamano, decimal tarifaDia)
         {
@@ -40,53 +39,23 @@ namespace PetCare
 
             Ocupado = true;
             NombreMascota = nombreMascota.Trim();
-            DiasEstancia = 0;
         }
 
-        public void SumarDiaEstancia()
-        {
-            if (Ocupado)
-            {
-                DiasEstancia++;
-            }
-        }
-
-        public decimal CalcularCuenta()
+        public void Liberar()
         {
             if (!Ocupado)
             {
-                return 0m;
+                throw new InvalidOperationException($"La jaula {Codigo} ya esta libre");
             }
-
-            return Math.Max(1, DiasEstancia) * TarifaDia;
-        }
-
-        public decimal DarDeAltaMedica()
-        {
-            if (!Ocupado)
-            {
-                throw new InvalidOperationException($"La jaula {Codigo} esta libre, no hay paciente que dar de alta");
-            }
-
-            decimal totalCobrar = CalcularCuenta();
 
             Ocupado = false;
             NombreMascota = null;
-            DiasEstancia = 0;
-
-            return totalCobrar;
         }
 
         public string ConsultarEstado()
         {
-            if (!Ocupado)
-            {
-                return $"Jaula {Codigo} [{Tamano}] - Tarifa: {TarifaDia:C0}/dia | LIBRE";
-            }
-
-            return $"Jaula {Codigo} [{Tamano}] - Tarifa: {TarifaDia:C0}/dia | " +
-                   $"OCUPADA por '{NombreMascota}' | Dias: {DiasEstancia} | " +
-                   $"Cuenta actual: {CalcularCuenta():C0}";
+            string estado = Ocupado ? $"OCUPADA por '{NombreMascota}'" : "LIBRE";
+            return $"Jaula {Codigo} [{Tamano}] - Tarifa: {TarifaDia:C0}/dia | {estado}";
         }
     }
 }

@@ -29,7 +29,7 @@ dotnet run
 | Parte | Estado |
 |---|---|
 | `Medicamento` de la Unidad 1 unido a `LoteMedicamento` | Hecho |
-| `Jaula` de la Unidad 1 corregida | Hecho |
+| `Jaula` de la Unidad 1 conectada a `Hospitalizacion` (agregación) | Hecho |
 | `IFacturable` | Hecho |
 | `LoteMedicamento` | Hecho |
 | `Servicio` (abstracta), `CitaVeterinaria`, `Hospitalizacion` | Hecho |
@@ -80,9 +80,10 @@ classDiagram
     }
 
     class Hospitalizacion {
+        +Jaula : Jaula
         +TarifaDiaria : decimal
         +FechaAlta : DateTime?
-        +Hospitalizacion(codigo, nombreMascota, fechaIngreso, tarifaDiaria)
+        +Hospitalizacion(codigo, nombreMascota, fechaIngreso, jaula)
         +DarDeAlta(fechaAlta : DateTime) bool
         +CalcularDias() int
         +CalcularCosto() decimal
@@ -146,12 +147,9 @@ classDiagram
         +TarifaDia : decimal
         +Ocupado : bool
         +NombreMascota : string?
-        +DiasEstancia : int
         +Jaula(codigo, tamano, tarifaDia)
         +IngresarPaciente(nombreMascota : string) void
-        +SumarDiaEstancia() void
-        +CalcularCuenta() decimal
-        +DarDeAltaMedica() decimal
+        +Liberar() void
         +ConsultarEstado() string
     }
 
@@ -169,6 +167,7 @@ classDiagram
     Factura "1" *-- "0..*" RenglonFactura : renglones
     RenglonFactura "0..*" o-- "1" IFacturable : cobra
     LoteMedicamento ..> TipoMedicamento
+    Hospitalizacion "0..*" o-- "1" Jaula : ocupa
     Jaula ..> TamanoJaula
 ```
 
@@ -187,6 +186,7 @@ Los métodos con `*` son abstractos.
 ### Composición y agregación
 
 - `Factura` ◆ `RenglonFactura` (**composición**, 1 a 0..*): la factura crea y controla sus renglones; desde afuera solo se leen. Si la factura se anula, sus renglones ya no sirven para otra.
+- `Hospitalizacion` ◇ `Jaula` (**agregación**, 0..* a 1): la hospitalización recibe una jaula que ya existe, toma su tarifa al ingresar, la ocupa y la libera al dar de alta. La jaula sigue existiendo para el siguiente animal.
 - `RenglonFactura` ◇ `IFacturable` (**agregación**, 0..* a 1): la consulta, la hospitalización o el lote llegan ya creados y siguen existiendo si la factura se anula, así que se pueden facturar de nuevo.
 
 ## Reglas de negocio implementadas
@@ -198,9 +198,10 @@ Los métodos con `*` son abstractos.
 | `CitaVeterinaria` | El veterinario se asigna una sola vez al confirmar |
 | `Hospitalizacion` | Se cobra por días entre ingreso y alta (o hasta hoy), mínimo un día |
 | `Hospitalizacion` | El alta se da una sola vez y no puede ser anterior al ingreso |
+| `Hospitalizacion` | La tarifa diaria se toma de la jaula al ingresar; al dar de alta la jaula queda libre |
 | `Servicio` | Siempre se factura como una unidad |
 | `Factura` | Una factura anulada no admite más renglones |
-| `Jaula` | No entra un segundo paciente a una jaula ocupada; se cobra mínimo un día |
+| `Jaula` | No entra un segundo paciente a una jaula ocupada; la tarifa depende del tamaño |
 | `Factura` | Al agregar una consulta no se escribe la cantidad: el sistema asume 1 |
 | `LoteMedicamento` | Un lote vencido no se puede vender, ni una unidad |
 | `LoteMedicamento` | El día del vencimiento todavía se vende; desde el día siguiente no |
