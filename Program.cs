@@ -5,17 +5,20 @@ namespace PetCare
 {
     internal static class Program
     {
+        static LoteMedicamento[] lotes = CrearLotes();
+        static CitaVeterinaria[] citasAgendadas = CrearCitas();
+        static Jaula[] jaulas = CrearJaulas();
+
+        static CitaVeterinaria? consulta;
+        static Hospitalizacion? hospitalizacion;
+        static Factura? factura;
+
         static void Main()
         {
             Console.OutputEncoding = Encoding.UTF8;
             CultureInfo.CurrentCulture = new CultureInfo("es-CO");
 
             MostrarBienvenida();
-            DemostracionPetCare();
-
-            Console.WriteLine("\nPresione Enter para ir al menu...");
-            Console.ReadLine();
-
             MenuPrincipal();
             MostrarDespedida();
         }
@@ -32,6 +35,14 @@ namespace PetCare
             Console.WriteLine("Sistema cerrado");
         }
 
+        static string LeerOpcion()
+        {
+            Console.Write("Opcion: ");
+            string opcion = Console.ReadLine() ?? "0";
+            Console.WriteLine();
+            return opcion.Trim();
+        }
+
         static void MenuPrincipal()
         {
             string opcion = string.Empty;
@@ -45,19 +56,16 @@ namespace PetCare
                 Console.WriteLine("4. Facturacion");
                 Console.WriteLine("5. Casos que no pueden pasar");
                 Console.WriteLine("6. Resumen de las tres areas");
-                Console.WriteLine("7. Repetir la demostracion");
+                Console.WriteLine("7. Demostracion completa (los 8 pasos seguidos)");
                 Console.WriteLine("0. Salir");
-                Console.Write("Opcion: ");
-
-                opcion = Console.ReadLine() ?? "0";
-                Console.WriteLine();
+                opcion = LeerOpcion();
 
                 switch (opcion)
                 {
-                    case "1": AreaFarmacia(); break;
-                    case "2": AreaRecepcion(); break;
-                    case "3": AreaHospitalizacion(); break;
-                    case "4": AreaFacturacion(); break;
+                    case "1": MenuFarmacia(); break;
+                    case "2": MenuRecepcion(); break;
+                    case "3": MenuHospitalizacion(); break;
+                    case "4": MenuFacturacion(); break;
                     case "5": CasosProhibidos(); break;
                     case "6": Resumen(); break;
                     case "7": DemostracionPetCare(); break;
@@ -65,6 +73,339 @@ namespace PetCare
                     default: Console.WriteLine("Opcion no valida"); break;
                 }
             }
+        }
+
+        static void MenuFarmacia()
+        {
+            string opcion = string.Empty;
+
+            while (opcion != "0")
+            {
+                Console.WriteLine("\n---------- FARMACIA ----------");
+                Console.WriteLine("1. Ver lotes");
+                Console.WriteLine("2. Recibir unidades de un proveedor");
+                Console.WriteLine("3. Despachar unidades");
+                Console.WriteLine("4. Lotes que hay que pedir y valor del inventario");
+                Console.WriteLine("0. Volver");
+                opcion = LeerOpcion();
+
+                switch (opcion)
+                {
+                    case "1":
+                        foreach (LoteMedicamento lote in lotes)
+                        {
+                            Console.WriteLine($"{lote.Codigo} | {lote.Tipo} | {lote.NombreMedicamento} | {lote.PrecioUnitario:C0} | " +
+                                $"Stock: {lote.StockActual} | Vence: {lote.FechaVencimiento:dd/MM/yyyy} | " +
+                                (lote.EstaVencido() ? "VENCIDO" : "VIGENTE") + (lote.EnNevera ? " | EN NEVERA" : ""));
+                        }
+                        break;
+                    case "2":
+                        lotes[0].RecibirUnidades(20);
+                        Console.WriteLine($"{lotes[0].Codigo} recibe 20 unidades | Stock: {lotes[0].StockActual}");
+                        break;
+                    case "3":
+                        Console.WriteLine($"{lotes[1].Codigo} despacha 5 unidades: {lotes[1].DespacharUnidades(5)} | Stock: {lotes[1].StockActual}");
+                        break;
+                    case "4":
+                        decimal valorTotal = 0m;
+                        foreach (LoteMedicamento lote in lotes)
+                        {
+                            valorTotal += lote.CalcularValorInventario();
+                            Console.WriteLine($"{lote.Codigo}: {lote.StockActual} unidades | pedir: {lote.NecesitaReabastecimiento()} | " +
+                                $"valor: {lote.CalcularValorInventario():C0}");
+                        }
+                        Console.WriteLine($"Valor total del inventario: {valorTotal:C0}");
+                        break;
+                    case "0": break;
+                    default: Console.WriteLine("Opcion no valida"); break;
+                }
+            }
+        }
+
+        static void MenuRecepcion()
+        {
+            string opcion = string.Empty;
+
+            while (opcion != "0")
+            {
+                Console.WriteLine("\n---------- RECEPCION ----------");
+                Console.WriteLine("1. Agendar consulta de 45 minutos");
+                Console.WriteLine("2. Confirmar veterinario");
+                Console.WriteLine("3. Marcar cita como atendida");
+                Console.WriteLine("4. Cancelar cita");
+                Console.WriteLine("5. Ver citas");
+                Console.WriteLine("0. Volver");
+                opcion = LeerOpcion();
+
+                if (opcion == "0")
+                {
+                    break;
+                }
+
+                if (opcion == "1")
+                {
+                    if (consulta != null)
+                    {
+                        Console.WriteLine($"La consulta {consulta.Codigo} ya esta agendada");
+                        continue;
+                    }
+                    consulta = new CitaVeterinaria("CIT-009", "Rambo", "1036458721", DateTime.Today.AddHours(10), "Control posoperatorio", 45);
+                    Console.WriteLine($"Consulta agendada: {consulta.ObtenerDescripcion()} | {consulta.DuracionMinutos} min | {consulta.CalcularCosto():C0}");
+                    continue;
+                }
+
+                if (opcion == "5")
+                {
+                    foreach (CitaVeterinaria cita in citasAgendadas)
+                    {
+                        MostrarCita(cita);
+                    }
+                    if (consulta != null)
+                    {
+                        MostrarCita(consulta);
+                    }
+                    continue;
+                }
+
+                if (opcion != "2" && opcion != "3" && opcion != "4")
+                {
+                    Console.WriteLine("Opcion no valida");
+                    continue;
+                }
+
+                if (consulta == null)
+                {
+                    Console.WriteLine("Primero agende la consulta (opcion 1)");
+                    continue;
+                }
+
+                switch (opcion)
+                {
+                    case "2":
+                        Console.WriteLine($"Confirmar al Dr. Restrepo: {consulta.ConfirmarVeterinario("Dr. Restrepo")} | Veterinario: {consulta.Veterinario}");
+                        break;
+                    case "3":
+                        Console.WriteLine($"Marcar atendida: {consulta.MarcarAtendida()} | Estado: {consulta.Estado}");
+                        break;
+                    case "4":
+                        Console.WriteLine($"Cancelar: {consulta.MarcarCancelada()} | Estado: {consulta.Estado}");
+                        break;
+                }
+            }
+        }
+
+        static void MostrarCita(CitaVeterinaria cita)
+        {
+            Console.WriteLine($"{cita.Codigo} | {cita.NombreMascota} | Cliente: {cita.CedulaCliente} | {cita.Motivo} | {cita.DuracionMinutos} min | " +
+                $"Veterinario: {cita.Veterinario ?? "sin confirmar"} | {cita.Estado} | {TextoDias(cita.CalcularDiasFaltantes())} | " +
+                $"vigente: {cita.EstaVigente()} | {cita.CalcularCosto():C0}");
+        }
+
+        static void MenuHospitalizacion()
+        {
+            string opcion = string.Empty;
+
+            while (opcion != "0")
+            {
+                Console.WriteLine("\n---------- HOSPITALIZACION ----------");
+                Console.WriteLine("1. Ver jaulas y tarifas por tamano");
+                Console.WriteLine("2. Ingresar animal (ingreso hace 3 dias)");
+                Console.WriteLine("3. Dar de alta hoy");
+                Console.WriteLine("4. Ver estado de las jaulas");
+                Console.WriteLine("0. Volver");
+                opcion = LeerOpcion();
+
+                switch (opcion)
+                {
+                    case "1":
+                        foreach (Jaula jaula in jaulas)
+                        {
+                            Console.WriteLine($"Jaula {jaula.Codigo} | {jaula.Tamano} | {jaula.TarifaDia:C0} por dia");
+                        }
+                        break;
+                    case "2":
+                        if (hospitalizacion != null)
+                        {
+                            Console.WriteLine($"{hospitalizacion.NombreMascota} ya fue ingresado en la jaula {hospitalizacion.Jaula.Codigo}");
+                            break;
+                        }
+                        hospitalizacion = new Hospitalizacion("HOS-132", "Trico", DateTime.Today.AddDays(-3), jaulas[1]);
+                        Console.WriteLine($"Ingreso registrado el {hospitalizacion.Fecha:dd/MM/yyyy}");
+                        Console.WriteLine(jaulas[1].ConsultarEstado());
+                        break;
+                    case "3":
+                        if (hospitalizacion == null)
+                        {
+                            Console.WriteLine("Primero ingrese el animal (opcion 2)");
+                            break;
+                        }
+                        Console.WriteLine($"Alta registrada: {hospitalizacion.DarDeAlta(DateTime.Today)}");
+                        Console.WriteLine($"{hospitalizacion.ObtenerDescripcion()} | Total a cobrar: {hospitalizacion.CalcularCosto():C0}");
+                        Console.WriteLine(hospitalizacion.Jaula.ConsultarEstado());
+                        break;
+                    case "4":
+                        foreach (Jaula jaula in jaulas)
+                        {
+                            Console.WriteLine(jaula.ConsultarEstado());
+                        }
+                        break;
+                    case "0": break;
+                    default: Console.WriteLine("Opcion no valida"); break;
+                }
+            }
+        }
+
+        static void MenuFacturacion()
+        {
+            string opcion = string.Empty;
+
+            while (opcion != "0")
+            {
+                Console.WriteLine("\n---------- FACTURACION ----------");
+                Console.WriteLine("1. Crear factura: consulta + hospitalizacion + 2 unidades del lote vigente");
+                Console.WriteLine("2. Imprimir factura");
+                Console.WriteLine("3. Intentar agregar el lote vencido");
+                Console.WriteLine("4. Anular factura e intentar agregar otro renglon");
+                Console.WriteLine("5. Factura nueva con la misma consulta");
+                Console.WriteLine("0. Volver");
+                opcion = LeerOpcion();
+
+                switch (opcion)
+                {
+                    case "1": CrearFactura(); break;
+                    case "2":
+                        if (factura == null)
+                        {
+                            Console.WriteLine("Primero cree la factura (opcion 1)");
+                            break;
+                        }
+                        ImprimirFactura(factura);
+                        break;
+                    case "3":
+                        if (factura == null)
+                        {
+                            Console.WriteLine("Primero cree la factura (opcion 1)");
+                            break;
+                        }
+                        try
+                        {
+                            factura.Agregar(lotes[2], 1);
+                        }
+                        catch (InvalidOperationException ex)
+                        {
+                            Console.WriteLine($"El sistema lo impidio: {ex.Message}");
+                        }
+                        Console.WriteLine($"La factura sigue igual, total: {factura.Total:C0}");
+                        break;
+                    case "4":
+                        if (factura == null)
+                        {
+                            Console.WriteLine("Primero cree la factura (opcion 1)");
+                            break;
+                        }
+                        Console.WriteLine($"Factura anulada: {factura.Anular()}");
+                        try
+                        {
+                            factura.Agregar(lotes[0], 1);
+                        }
+                        catch (InvalidOperationException ex)
+                        {
+                            Console.WriteLine($"El sistema lo impidio: {ex.Message}");
+                        }
+                        break;
+                    case "5":
+                        if (consulta == null)
+                        {
+                            Console.WriteLine("Primero agende la consulta en Recepcion (opcion 2 del menu principal)");
+                            break;
+                        }
+                        Factura nuevaFactura = new Factura("FAC-1002", DateTime.Today, "Ivan");
+                        try
+                        {
+                            nuevaFactura.Agregar(consulta);
+                            Console.WriteLine($"La consulta {consulta.Codigo} sigue existiendo y se factura de nuevo");
+                            ImprimirFactura(nuevaFactura);
+                        }
+                        catch (InvalidOperationException ex)
+                        {
+                            Console.WriteLine($"El sistema lo impidio: {ex.Message}");
+                        }
+                        break;
+                    case "0": break;
+                    default: Console.WriteLine("Opcion no valida"); break;
+                }
+            }
+        }
+
+        static void CrearFactura()
+        {
+            if (factura != null)
+            {
+                Console.WriteLine($"La factura {factura.Numero} ya fue creada");
+                return;
+            }
+            if (consulta == null)
+            {
+                Console.WriteLine("Primero agende la consulta en Recepcion (opcion 2 del menu principal)");
+                return;
+            }
+            if (hospitalizacion == null)
+            {
+                Console.WriteLine("Primero ingrese el animal en Hospitalizacion (opcion 3 del menu principal)");
+                return;
+            }
+
+            Factura nueva = new Factura("FAC-1001", DateTime.Today, "Ivan");
+            try
+            {
+                nueva.Agregar(consulta);
+                nueva.Agregar(hospitalizacion);
+                nueva.Agregar(lotes[0], 2);
+                factura = nueva;
+                Console.WriteLine($"Factura {factura.Numero} creada con {factura.Renglones.Count} renglones");
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"El sistema lo impidio: {ex.Message}");
+            }
+        }
+
+        static void Resumen()
+        {
+            Console.WriteLine("---------- RESUMEN DE LAS TRES AREAS ----------");
+
+            decimal valorTotal = 0m;
+            foreach (LoteMedicamento lote in lotes)
+            {
+                valorTotal += lote.CalcularValorInventario();
+            }
+
+            Console.WriteLine($"FARMACIA | valor del inventario: {valorTotal:C0}");
+            foreach (LoteMedicamento lote in lotes)
+            {
+                Console.WriteLine($"  {lote.Codigo}: {lote.StockActual} unidades | pedir: {lote.NecesitaReabastecimiento()} | vencido: {lote.EstaVencido()}");
+            }
+
+            Console.WriteLine("RECEPCION");
+            foreach (CitaVeterinaria cita in citasAgendadas)
+            {
+                Console.WriteLine($"  {cita.Codigo}: {cita.Estado} | vigente: {cita.EstaVigente()} | {TextoDias(cita.CalcularDiasFaltantes())} | {cita.CalcularCosto():C0}");
+            }
+            if (consulta != null)
+            {
+                Console.WriteLine($"  {consulta.Codigo}: {consulta.Estado} | vigente: {consulta.EstaVigente()} | {TextoDias(consulta.CalcularDiasFaltantes())} | {consulta.CalcularCosto():C0}");
+            }
+
+            Console.WriteLine("HOSPITALIZACION");
+            foreach (Jaula jaula in jaulas)
+            {
+                Console.WriteLine("  " + jaula.ConsultarEstado());
+            }
+
+            Console.WriteLine("FACTURACION");
+            Console.WriteLine(factura == null
+                ? "  Sin factura creada"
+                : $"  {factura.Numero} | {factura.Renglones.Count} renglones | total {factura.Total:C0} | anulada: {factura.Anulada}");
         }
 
         static LoteMedicamento[] CrearLotes()
@@ -96,88 +437,6 @@ namespace PetCare
                 new Jaula("J-07", TamanoJaula.Mediano),
                 new Jaula("J-12", TamanoJaula.Grande)
             };
-        }
-
-        static void AreaFarmacia()
-        {
-            Console.WriteLine("---------- FARMACIA ----------");
-            LoteMedicamento[] lotes = CrearLotes();
-
-            foreach (LoteMedicamento lote in lotes)
-            {
-                Console.WriteLine($"{lote.Codigo} | {lote.Tipo} | {lote.NombreMedicamento} | {lote.PrecioUnitario:C0} | " +
-                    $"Stock: {lote.StockActual} | Vence: {lote.FechaVencimiento:dd/MM/yyyy}" + (lote.EnNevera ? " | EN NEVERA" : ""));
-            }
-
-            lotes[0].RecibirUnidades(20);
-            Console.WriteLine($"\nMED-0142 recibe 20 unidades | Stock: {lotes[0].StockActual}");
-            Console.WriteLine($"MED-0207 despacha 5 unidades: {lotes[1].DespacharUnidades(5)} | Stock: {lotes[1].StockActual}");
-            Console.WriteLine($"MED-0315 vencido: {lotes[2].EstaVencido()}");
-            Console.WriteLine($"MED-0142 necesita pedido: {lotes[0].NecesitaReabastecimiento()}");
-            Console.WriteLine($"Valor inventario MED-0207: {lotes[1].CalcularValorInventario():C0}");
-        }
-
-        static void AreaRecepcion()
-        {
-            Console.WriteLine("---------- RECEPCION ----------");
-            CitaVeterinaria[] citas = CrearCitas();
-
-            Console.WriteLine($"Confirmar veterinario en CIT-001: {citas[0].ConfirmarVeterinario("Dra. Lina Restrepo")}");
-            Console.WriteLine($"Atender CIT-002: {citas[1].MarcarAtendida()} | Estado: {citas[1].Estado}");
-            Console.WriteLine($"Cancelar CIT-003: {citas[2].MarcarCancelada()} | Estado: {citas[2].Estado}");
-            Console.WriteLine();
-
-            foreach (CitaVeterinaria cita in citas)
-            {
-                Console.WriteLine($"{cita.Codigo} | Cliente: {cita.CedulaCliente} | {cita.Motivo} | {cita.DuracionMinutos} min | " +
-                    $"{TextoDias(cita.CalcularDiasFaltantes())} | vigente: {cita.EstaVigente()} | {cita.CalcularCosto():C0}");
-            }
-        }
-
-        static void AreaHospitalizacion()
-        {
-            Console.WriteLine("---------- HOSPITALIZACION ----------");
-            Jaula[] jaulas = CrearJaulas();
-
-            foreach (Jaula jaula in jaulas)
-            {
-                Console.WriteLine(jaula.ConsultarEstado());
-            }
-
-            Hospitalizacion manchas = new Hospitalizacion("HOS-001", "Manchas", DateTime.Today.AddDays(-2), jaulas[0]);
-            Hospitalizacion rocky = new Hospitalizacion("HOS-002", "Rocky", DateTime.Today.AddDays(-5), jaulas[2]);
-
-            Console.WriteLine("\nIngresan Manchas a J-03 y Rocky a J-12");
-            Console.WriteLine(jaulas[0].ConsultarEstado());
-            Console.WriteLine(jaulas[2].ConsultarEstado());
-
-            Console.WriteLine($"\nAlta de Manchas: {manchas.DarDeAlta(DateTime.Today)} | Total a cobrar: {manchas.CalcularCosto():C0}");
-            Console.WriteLine(jaulas[0].ConsultarEstado());
-            Console.WriteLine($"Rocky sigue hospitalizado: {rocky.ObtenerDescripcion()} | Cuenta actual: {rocky.CalcularCosto():C0}");
-        }
-
-        static void AreaFacturacion()
-        {
-            Console.WriteLine("---------- FACTURACION ----------");
-            CitaVeterinaria cita = CrearCitas()[1];
-            cita.ConfirmarVeterinario("Dr. Andres Zapata");
-            cita.MarcarAtendida();
-
-            Jaula jaula = CrearJaulas()[1];
-            Hospitalizacion hospitalizacion = new Hospitalizacion("HOS-003", "Rocky", DateTime.Today.AddDays(-2), jaula);
-            hospitalizacion.DarDeAlta(DateTime.Today);
-
-            LoteMedicamento lote = CrearLotes()[0];
-
-            Factura factura = new Factura("FAC-2001", DateTime.Today, "Carlos Gomez");
-            factura.Agregar(cita);
-            factura.Agregar(hospitalizacion);
-            factura.Agregar(lote, 3);
-            ImprimirFactura(factura);
-
-            Console.WriteLine($"\nAnular la factura: {factura.Anular()}");
-            Console.WriteLine($"Anularla otra vez: {factura.Anular()}");
-            Console.WriteLine($"Factura anulada: {factura.Anulada}");
         }
 
         static void CasosProhibidos()
@@ -253,38 +512,6 @@ namespace PetCare
             catch (InvalidOperationException ex)
             {
                 Console.WriteLine($"    Error: {ex.Message}");
-            }
-        }
-
-        static void Resumen()
-        {
-            Console.WriteLine("---------- RESUMEN DE LAS TRES AREAS ----------");
-            LoteMedicamento[] lotes = CrearLotes();
-            CitaVeterinaria[] citas = CrearCitas();
-            Jaula[] jaulas = CrearJaulas();
-
-            decimal valorTotal = 0m;
-            foreach (LoteMedicamento lote in lotes)
-            {
-                valorTotal += lote.CalcularValorInventario();
-            }
-
-            Console.WriteLine($"FARMACIA | valor del inventario: {valorTotal:C0}");
-            foreach (LoteMedicamento lote in lotes)
-            {
-                Console.WriteLine($"  {lote.Codigo}: {lote.StockActual} unidades | pedir: {lote.NecesitaReabastecimiento()} | vencido: {lote.EstaVencido()}");
-            }
-
-            Console.WriteLine("RECEPCION");
-            foreach (CitaVeterinaria cita in citas)
-            {
-                Console.WriteLine($"  {cita.Codigo}: {cita.Estado} | vigente: {cita.EstaVigente()} | {TextoDias(cita.CalcularDiasFaltantes())} | {cita.CalcularCosto():C0}");
-            }
-
-            Console.WriteLine("HOSPITALIZACION");
-            foreach (Jaula jaula in jaulas)
-            {
-                Console.WriteLine("  " + jaula.ConsultarEstado());
             }
         }
 
