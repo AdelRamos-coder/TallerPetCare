@@ -283,25 +283,23 @@ namespace PetCare
 
             LoteMedicamento loteActivo = new LoteMedicamento("L-203", "Amoxicilina 500 mg", hoy.AddMonths(6), 2500m);
             LoteMedicamento loteVencido = new LoteMedicamento("L-118", "Meloxicam 1 mg", hoy.AddDays(-1), 1800m);
+            List<IFacturable> facturables = new List<IFacturable> { consulta, hospitalizacion, loteActivo };
+            foreach (IFacturable item in facturables)
+            {
+                Console.WriteLine($"- {item.ObtenerDescripcion()} | precio unitario: {item.ObtenerPrecioUnitario():C}");
+            }
             Console.WriteLine($"{loteActivo.ObtenerDescripcion()} | vencido: {loteActivo.EstaVencido()}");
             Console.WriteLine($"{loteVencido.ObtenerDescripcion()} | vencido: {loteVencido.EstaVencido()}");
             Console.WriteLine();
 
            
-            Console.WriteLine("**Factura alargada**");
+            Console.WriteLine("**Factura**");
             // Crear factura y agregar consulta, hospitalizacion y 2 unidades del lote vigente
             Factura factura = new Factura("FAC-1001", DateTime.Today, "Ivan");
             factura.Agregar(consulta);
             factura.Agregar(hospitalizacion);
             // Agregar lote vigente sólo si no está vencido
-            if (loteActivo.EstaVencido())
-            {
-                Console.WriteLine($"No se agregó {loteActivo.ObtenerDescripcion()}: el lote está vencido.");
-            }
-            else
-            {
-                factura.Agregar(loteActivo, 2);
-            }
+            factura.Agregar(loteActivo, 2);
             Console.WriteLine();
 
             // Imprimir renglones y total
@@ -315,25 +313,28 @@ namespace PetCare
 
             // Intento de facturar lote vencido 
             Console.WriteLine("**Intento de facturar lote vencido**");
-            Factura facturaIntento = new Factura("FAC-1001-V", DateTime.Today, "Ivan");
-            if (loteVencido.EstaVencido())
+            try
             {
-                Console.WriteLine($"  No se pudo agregar el lote: {loteVencido.ObtenerDescripcion()} venció el {loteVencido.FechaVencimiento:dd/MM/yyyy}.");
+                factura.Agregar(loteVencido, 1);
             }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"  El sistema lo impidió: {ex.Message}");
+            }
+            Console.WriteLine($"  La factura sigue igual, total: {factura.Total:C}");
             Console.WriteLine();
             
             // Anular la factura y demostrar que ya no se pueden agregar renglones
             Console.WriteLine("**Anular factura**");
             bool anulada = factura.Anular();
-            Console.WriteLine($"Factura anulada: {anulada}");
             Console.WriteLine("Intento de agregar otro renglón tras anulación:");
-            if (factura.Anulada)
-            {
-                Console.WriteLine("  No se pudo agregar renglón: la factura está anulada.");
-            }
-            else
+            try
             {
                 factura.Agregar(loteActivo, 1);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"  El sistema lo impidió: {ex.Message}");
             }
             Console.WriteLine();
 
