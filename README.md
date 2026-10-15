@@ -145,11 +145,11 @@ classDiagram
         +Codigo : string
         +Tamano : TamanoJaula
         +TarifaDia : decimal
+        +Ocupante : Hospitalizacion?
         +Ocupado : bool
-        +NombreMascota : string?
         +Jaula(codigo, tamano, tarifaDia)
-        +IngresarPaciente(nombreMascota : string) void
-        +Liberar() void
+        ~IngresarPaciente(hospitalizacion : Hospitalizacion) void
+        ~Liberar() void
         +ConsultarEstado() string
     }
 
@@ -168,6 +168,7 @@ classDiagram
     RenglonFactura "0..*" o-- "1" IFacturable : cobra
     LoteMedicamento ..> TipoMedicamento
     Hospitalizacion "0..*" o-- "1" Jaula : ocupa
+    Jaula --> "0..1" Hospitalizacion : ocupante actual
     Jaula ..> TamanoJaula
 ```
 
@@ -186,7 +187,7 @@ Los métodos con `*` son abstractos.
 ### Composición y agregación
 
 - `Factura` ◆ `RenglonFactura` (**composición**, 1 a 0..*): la factura crea y controla sus renglones; desde afuera solo se leen. Si la factura se anula, sus renglones ya no sirven para otra.
-- `Hospitalizacion` ◇ `Jaula` (**agregación**, 0..* a 1): la hospitalización recibe una jaula que ya existe, toma su tarifa al ingresar, la ocupa y la libera al dar de alta. La jaula sigue existiendo para el siguiente animal.
+- `Hospitalizacion` ◇ `Jaula` (**agregación**, 0..* a 1): la hospitalización recibe una jaula que ya existe, toma su tarifa al ingresar, la ocupa y la libera al dar de alta. La jaula sigue existiendo para el siguiente animal. La jaula no copia el nombre de la mascota: guarda a su ocupante actual (0..1) y de ahí lee el nombre, los días y la cuenta.
 - `RenglonFactura` ◇ `IFacturable` (**agregación**, 0..* a 1): la consulta, la hospitalización o el lote llegan ya creados y siguen existiendo si la factura se anula, así que se pueden facturar de nuevo.
 
 ## Reglas de negocio implementadas

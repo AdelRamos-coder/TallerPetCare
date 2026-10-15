@@ -6,8 +6,9 @@ namespace PetCare
         public TamanoJaula Tamano { get; }
         public decimal TarifaDia { get; }
 
-        public bool Ocupado { get; private set; }
-        public string? NombreMascota { get; private set; }
+        public Hospitalizacion? Ocupante { get; private set; }
+
+        public bool Ocupado => Ocupante != null;
 
         public Jaula(string codigo, TamanoJaula tamano, decimal tarifaDia)
         {
@@ -25,37 +26,39 @@ namespace PetCare
             TarifaDia = tarifaDia;
         }
 
-        public void IngresarPaciente(string nombreMascota)
+        internal void IngresarPaciente(Hospitalizacion hospitalizacion)
         {
-            if (string.IsNullOrWhiteSpace(nombreMascota))
-            {
-                throw new ArgumentException("Debe indicar el nombre del animal");
-            }
-            if (Ocupado)
+            ArgumentNullException.ThrowIfNull(hospitalizacion);
+
+            if (Ocupante != null)
             {
                 throw new InvalidOperationException(
-                    $"La jaula {Codigo} ya esta ocupada por '{NombreMascota}', no se puede ingresar otro paciente");
+                    $"La jaula {Codigo} ya esta ocupada por '{Ocupante.NombreMascota}', no se puede ingresar otro paciente");
             }
 
-            Ocupado = true;
-            NombreMascota = nombreMascota.Trim();
+            Ocupante = hospitalizacion;
         }
 
-        public void Liberar()
+        internal void Liberar()
         {
-            if (!Ocupado)
+            if (Ocupante == null)
             {
                 throw new InvalidOperationException($"La jaula {Codigo} ya esta libre");
             }
 
-            Ocupado = false;
-            NombreMascota = null;
+            Ocupante = null;
         }
 
         public string ConsultarEstado()
         {
-            string estado = Ocupado ? $"OCUPADA por '{NombreMascota}'" : "LIBRE";
-            return $"Jaula {Codigo} [{Tamano}] - Tarifa: {TarifaDia:C0}/dia | {estado}";
+            if (Ocupante == null)
+            {
+                return $"Jaula {Codigo} [{Tamano}] - Tarifa: {TarifaDia:C0}/dia | LIBRE";
+            }
+
+            return $"Jaula {Codigo} [{Tamano}] - Tarifa: {TarifaDia:C0}/dia | " +
+                   $"OCUPADA por '{Ocupante.NombreMascota}' | Dias: {Ocupante.CalcularDias()} | " +
+                   $"Cuenta actual: {Ocupante.CalcularCosto():C0}";
         }
     }
 }

@@ -11,10 +11,10 @@ namespace PetCare
         {
             ArgumentNullException.ThrowIfNull(jaula);
 
-            jaula.IngresarPaciente(NombreMascota);
-
             Jaula = jaula;
             TarifaDiaria = jaula.TarifaDia;
+
+            jaula.IngresarPaciente(this);
         }
 
         public bool DarDeAlta(DateTime fechaAlta)
