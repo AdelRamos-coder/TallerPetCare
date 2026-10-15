@@ -1,6 +1,6 @@
 # Bitácora de uso de IA
 
-Usamos Claude y ChatGPT para revisar el código, buscar errores y pedir ideas. No todo lo que nos dijeron lo dejamos, abajo está lo que usamos y lo que cambiamos.
+
 
 | Fecha | Quién | Herramienta | Qué le pedimos | Qué usamos | Qué corregimos o no usamos y por qué |
 |---|---|---|---|---|---|
