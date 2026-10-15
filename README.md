@@ -33,6 +33,7 @@ dotnet run
 | `IFacturable` | Hecho |
 | `LoteMedicamento` | Hecho |
 | `Servicio` (abstracta), `CitaVeterinaria`, `Hospitalizacion` | Hecho |
+| `CitaVeterinaria` recupera cédula, motivo y estados de la Unidad 1 | Hecho |
 | `Factura`, `RenglonFactura` | Hecho |
 | `Main` con los 8 pasos de la demostración | Hecho |
 | `DISENO.md`, `IA.md`, historias de usuario, diagrama en draw.io | Pendiente |
@@ -71,12 +72,20 @@ classDiagram
         -MinutosBase : int = 30
         -TarifaBase : decimal = 60000
         -TarifaMinutoAdicional : decimal = 1500
+        +CedulaCliente : string
+        +Motivo : string
         +DuracionMinutos : int
         +Veterinario : string?
-        +CitaVeterinaria(codigo, nombreMascota, fecha, duracionMinutos = 30)
+        +Estado : EstadoCita
+        +CitaVeterinaria(codigo, nombreMascota, cedulaCliente, fecha, motivo, duracionMinutos = 30)
         +ConfirmarVeterinario(veterinario : string) bool
+        +MarcarAtendida() bool
+        +MarcarCancelada() bool
+        +CalcularDiasFaltantes() int
+        +EstaVigente() bool
         +CalcularCosto() decimal
         +ObtenerDescripcion() string
+        +ValidarFacturacion(cantidad : int) void
     }
 
     class Hospitalizacion {
@@ -133,6 +142,13 @@ classDiagram
         ~RenglonFactura(item, descripcion, cantidad, subtotal)
     }
 
+    class EstadoCita {
+        <<enumeration>>
+        Programada
+        Atendida
+        Cancelada
+    }
+
     class TipoMedicamento {
         <<enumeration>>
         Antiparasitarios
@@ -166,6 +182,7 @@ classDiagram
     Servicio <|-- Hospitalizacion
     Factura "1" *-- "0..*" RenglonFactura : renglones
     RenglonFactura "0..*" o-- "1" IFacturable : cobra
+    CitaVeterinaria ..> EstadoCita
     LoteMedicamento ..> TipoMedicamento
     Hospitalizacion "0..*" o-- "1" Jaula : ocupa
     Jaula --> "0..1" Hospitalizacion : ocupante actual
@@ -197,6 +214,9 @@ Los métodos con `*` son abstractos.
 | `CitaVeterinaria` | Vale $60.000 hasta 30 minutos y $1.500 por cada minuto adicional |
 | `CitaVeterinaria` | La duración va de 15 a 180 minutos y arranca en 30 |
 | `CitaVeterinaria` | El veterinario se asigna una sola vez al confirmar |
+| `CitaVeterinaria` | Toda cita arranca Programada; solo una cita programada se puede atender o cancelar |
+| `CitaVeterinaria` | Una cita atendida no se cancela y no se cancela dos veces (devuelve false para avisar) |
+| `CitaVeterinaria` | Una cita cancelada no se puede facturar |
 | `Hospitalizacion` | Se cobra por días entre ingreso y alta (o hasta hoy), mínimo un día |
 | `Hospitalizacion` | El alta se da una sola vez y no puede ser anterior al ingreso |
 | `Hospitalizacion` | La tarifa diaria se toma de la jaula al ingresar; al dar de alta la jaula queda libre |

@@ -20,9 +20,14 @@ namespace PetCare
         static void DemostracionPetCare()
         {
             Console.WriteLine("\n[1] Consulta de 45 minutos");
-            CitaVeterinaria consulta = new CitaVeterinaria("CIT-009", "Rambo", DateTime.Today.AddHours(10), 45);
+            CitaVeterinaria consulta = new CitaVeterinaria("CIT-009", "Rambo", "1036458721",
+                DateTime.Today.AddHours(10), "Control posoperatorio", 45);
+            Console.WriteLine($"  Estado: {consulta.Estado} | vigente: {consulta.EstaVigente()} | dias faltantes: {consulta.CalcularDiasFaltantes()}");
             bool veterinarioConfirmado = consulta.ConfirmarVeterinario("Dr. Mengueche");
             Console.WriteLine($"  Veterinario confirmado: {veterinarioConfirmado}");
+            Console.WriteLine($"  Confirmar otro veterinario: {consulta.ConfirmarVeterinario("Dra. Lina Restrepo")}");
+            Console.WriteLine($"  Marcar atendida: {consulta.MarcarAtendida()} | Estado: {consulta.Estado}");
+            Console.WriteLine($"  Cancelar una cita ya atendida: {consulta.MarcarCancelada()} | Sigue {consulta.Estado}");
             Console.WriteLine($"  {consulta.ObtenerDescripcion()}");
             Console.WriteLine($"  Costo de la consulta: {consulta.CalcularCosto():C0}");
 
@@ -78,6 +83,19 @@ namespace PetCare
                 Console.WriteLine($"  El sistema lo impidio: {ex.Message}");
             }
             Console.WriteLine($"  La factura sigue igual, total: {factura.Total:C0}");
+
+            Console.WriteLine("\n    Intento de facturar una cita cancelada");
+            CitaVeterinaria citaCancelada = new CitaVeterinaria("CIT-010", "Luna", "71234567",
+                DateTime.Today.AddDays(2), "Vacunacion anual");
+            Console.WriteLine($"  Cancelar: {citaCancelada.MarcarCancelada()} | Cancelar otra vez: {citaCancelada.MarcarCancelada()}");
+            try
+            {
+                factura.Agregar(citaCancelada);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"  El sistema lo impidio: {ex.Message}");
+            }
 
             Console.WriteLine("\n[7] Anular la factura e intentar agregar otro renglon");
             bool anulada = factura.Anular();

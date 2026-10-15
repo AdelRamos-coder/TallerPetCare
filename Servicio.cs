@@ -34,7 +34,7 @@ namespace PetCare
             return CalcularCosto();
         }
 
-        public void ValidarFacturacion(int cantidad)
+        public virtual void ValidarFacturacion(int cantidad)
         {
             if (cantidad != 1)
             {
