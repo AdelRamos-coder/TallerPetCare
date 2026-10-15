@@ -1,4 +1,4 @@
-# PetCare 2.0
+# PetCare 
 
 ## Integrantes
 
