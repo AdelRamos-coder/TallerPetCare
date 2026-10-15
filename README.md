@@ -28,7 +28,8 @@ En el menú, la opción **6** ejecuta las pruebas de `LoteMedicamento`.
 
 | Parte | Estado |
 |---|---|
-| Clases de la Unidad 1 corregidas (`Jaula`, `Medicamento`) | Hecho |
+| `Medicamento` de la Unidad 1 unido a `LoteMedicamento` | Hecho |
+| `Jaula` de la Unidad 1 corregida | Hecho |
 | `IFacturable` | Hecho |
 | `LoteMedicamento` + pruebas | Hecho |
 | `Servicio` (abstracta), `CitaVeterinaria`, `Hospitalizacion` | Hecho |
@@ -89,13 +90,21 @@ classDiagram
     }
 
     class LoteMedicamento {
+        -StockMinimo : int = 10
         +Codigo : string
         +NombreMedicamento : string
+        +Tipo : TipoMedicamento
         +FechaVencimiento : DateOnly
         +PrecioUnitario : decimal
-        +LoteMedicamento(codigo, nombreMedicamento, fechaVencimiento, precioUnitario)
+        +EnNevera : bool
+        +StockActual : int
+        +LoteMedicamento(codigo, nombreMedicamento, tipo, fechaVencimiento, precioUnitario, stockInicial, enNevera = false)
         +EstaVencido(fecha : DateOnly) bool
         +EstaVencido() bool
+        +RecibirUnidades(cantidad : int) void
+        +DespacharUnidades(cantidad : int) bool
+        +NecesitaReabastecimiento() bool
+        +CalcularValorInventario() decimal
         +ObtenerDescripcion() string
         +ObtenerPrecioUnitario() decimal
         +ValidarFacturacion(cantidad : int) void
@@ -104,23 +113,6 @@ classDiagram
     class PruebasLoteMedicamento {
         <<static>>
         +EjecutarTodas() void
-    }
-
-    class Medicamento {
-        -STOCK_MINIMO : int = 10
-        +CodigoInterno : string
-        +TipoMedicamento : TipoMedicamento
-        +NombreComercial : string
-        +Presentacion : string
-        +PrecioUnidad : decimal
-        +StockActual : int
-        +FechaVencimiento : DateTime
-        +EnNevera : bool
-        +RecibirUnidades(cantidad : int) void
-        +DespacharUnidades(cantidad : int) bool
-        +EstaVencido() bool
-        +NecesitaReabastecimiento() bool
-        +CalcularValorInventario() decimal
     }
 
     class Jaula {
@@ -157,7 +149,7 @@ classDiagram
     Servicio <|-- CitaVeterinaria
     Servicio <|-- Hospitalizacion
     PruebasLoteMedicamento ..> LoteMedicamento
-    Medicamento ..> TipoMedicamento
+    LoteMedicamento ..> TipoMedicamento
     Jaula ..> TamanoJaula
 ```
 
@@ -189,5 +181,6 @@ Los métodos con `*` son abstractos.
 | `LoteMedicamento` | Un lote vencido no se puede vender, ni una unidad |
 | `LoteMedicamento` | El día del vencimiento todavía se vende; desde el día siguiente no |
 | `LoteMedicamento` | Código y nombre obligatorios, precio mayor que cero, cantidad mayor que cero |
-| `Medicamento` | No se despacha si está vencido, si la cantidad es 0 o si supera el stock |
+| `LoteMedicamento` | No se factura ni se despacha más de lo que hay en stock |
+| `LoteMedicamento` | No se despacha si está vencido o si la cantidad es 0; avisa cuando quedan menos de 10 unidades |
 | `Jaula` | No entra un segundo paciente a una jaula ocupada; se cobra mínimo un día |

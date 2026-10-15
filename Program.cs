@@ -15,16 +15,16 @@ namespace PetCare
             MostrarDespedida();
         }
 
-        static Medicamento[] CrearMedicamentos()
+        static LoteMedicamento[] CrearMedicamentos()
         {
             return new[]
             {
-                new Medicamento("MED-0142", TipoMedicamento.Antibioticos, "Amoxivet 250", "Tableta 250 mg",
-                    1800m, 8, new DateTime(2027, 5, 30), false),
-                new Medicamento("MED-0207", TipoMedicamento.Vacunas, "Rabivac", "Frasco 10 mL",
-                    32000m, 25, new DateTime(2027, 11, 15), true),
-                new Medicamento("MED-0315", TipoMedicamento.Antiparasitarios, "Drontal Plus", "Tableta 700 mg",
-                    9500m, 40, new DateTime(2026, 3, 10), false)
+                new LoteMedicamento("MED-0142", "Amoxivet 250 mg", TipoMedicamento.Antibioticos,
+                    new DateOnly(2027, 5, 30), 1800m, 8),
+                new LoteMedicamento("MED-0207", "Rabivac 10 mL", TipoMedicamento.Vacunas,
+                    new DateOnly(2027, 11, 15), 32000m, 25, enNevera: true),
+                new LoteMedicamento("MED-0315", "Drontal Plus 700 mg", TipoMedicamento.Antiparasitarios,
+                    new DateOnly(2026, 3, 10), 9500m, 40)
             };
         }
 
@@ -98,9 +98,9 @@ namespace PetCare
         static void AreaFarmacia()
         {
             Console.WriteLine("---------- FARMACIA ----------");
-            Medicamento[] medicamentos = CrearMedicamentos();
+            LoteMedicamento[] medicamentos = CrearMedicamentos();
 
-            foreach (Medicamento medicamento in medicamentos)
+            foreach (LoteMedicamento medicamento in medicamentos)
             {
                 MostrarFicha(medicamento);
             }
@@ -113,10 +113,10 @@ namespace PetCare
             Console.WriteLine($"Valor inventario MED-0207: {medicamentos[1].CalcularValorInventario():C0}");
         }
 
-        static void MostrarFicha(Medicamento medicamento)
+        static void MostrarFicha(LoteMedicamento medicamento)
         {
-            Console.WriteLine($"{medicamento.CodigoInterno} | {medicamento.TipoMedicamento} | {medicamento.NombreComercial} | " +
-                $"{medicamento.Presentacion} | {medicamento.PrecioUnidad:C0} | Stock: {medicamento.StockActual} | " +
+            Console.WriteLine($"{medicamento.Codigo} | {medicamento.Tipo} | {medicamento.NombreMedicamento} | " +
+                $"{medicamento.PrecioUnitario:C0} | Stock: {medicamento.StockActual} | " +
                 $"Vence: {medicamento.FechaVencimiento:dd/MM/yyyy}" + (medicamento.EnNevera ? " | EN NEVERA" : ""));
         }
 
@@ -159,7 +159,7 @@ namespace PetCare
         static void CasosProhibidos()
         {
             Console.WriteLine("---------- CASOS QUE NO PUEDEN PASAR ----------");
-            Medicamento[] medicamentos = CrearMedicamentos();
+            LoteMedicamento[] medicamentos = CrearMedicamentos();
             CitaVeterinaria[] citas = CrearCitas();
             Jaula[] jaulas = CrearJaulas();
 
@@ -228,20 +228,20 @@ namespace PetCare
         static void Resumen()
         {
             Console.WriteLine("---------- RESUMEN DE LAS TRES AREAS ----------");
-            Medicamento[] medicamentos = CrearMedicamentos();
+            LoteMedicamento[] medicamentos = CrearMedicamentos();
             CitaVeterinaria[] citas = CrearCitas();
             Jaula[] jaulas = CrearJaulas();
 
             decimal valorTotal = 0m;
-            foreach (Medicamento medicamento in medicamentos)
+            foreach (LoteMedicamento medicamento in medicamentos)
             {
                 valorTotal += medicamento.CalcularValorInventario();
             }
 
             Console.WriteLine($"FARMACIA | valor del inventario: {valorTotal:C0}");
-            foreach (Medicamento medicamento in medicamentos)
+            foreach (LoteMedicamento medicamento in medicamentos)
             {
-                Console.WriteLine($"  {medicamento.CodigoInterno}: {medicamento.StockActual} unidades | " +
+                Console.WriteLine($"  {medicamento.Codigo}: {medicamento.StockActual} unidades | " +
                     $"pedir: {medicamento.NecesitaReabastecimiento()} | vencido: {medicamento.EstaVencido()}");
             }
 
@@ -281,8 +281,8 @@ namespace PetCare
             Console.WriteLine("**Lotes de medicamento**");
             DateOnly hoy = new DateOnly(DateTime.Today.Year,DateTime.Today.Month, DateTime.Today.Day);
 
-            LoteMedicamento loteActivo = new LoteMedicamento("L-203", "Amoxicilina 500 mg", hoy.AddMonths(6), 2500m);
-            LoteMedicamento loteVencido = new LoteMedicamento("L-118", "Meloxicam 1 mg", hoy.AddDays(-1), 1800m);
+            LoteMedicamento loteActivo = new LoteMedicamento("L-203", "Amoxicilina 500 mg", TipoMedicamento.Antibioticos, hoy.AddMonths(6), 2500m, 50);
+            LoteMedicamento loteVencido = new LoteMedicamento("L-118", "Meloxicam 1 mg", TipoMedicamento.Analgesicos, hoy.AddDays(-1), 1800m, 30);
             List<IFacturable> facturables = new List<IFacturable> { consulta, hospitalizacion, loteActivo };
             foreach (IFacturable item in facturables)
             {
