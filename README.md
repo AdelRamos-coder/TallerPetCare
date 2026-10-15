@@ -8,7 +8,7 @@ Institución Universitaria Pascual Bravo · Docente: Jorge Albeiro Muriel Vélez
 | Integrante | Responsabilidad |
 |---|---|
 | Ader | Servicios y reglas de cobro: `Servicio`, `CitaVeterinaria`, `Hospitalizacion` |
-| Adel Ramos | Medicamentos e interfaz: `LoteMedicamento`, `IFacturable` y sus pruebas |
+| Adel Ramos | Medicamentos e interfaz: `LoteMedicamento`, `IFacturable` |
 | Wilson Caraballo | Facturación: `Factura`, `RenglonFactura`, anulación |
 | Luis | Integración, `Main` de demostración, diagrama UML, historias de usuario, `DISENO.md` e `IA.md` |
 
@@ -23,16 +23,15 @@ dotnet run
 ```
 
 `dotnet run` ejecuta la demostración de los 8 pasos.
-Para correr las pruebas de `LoteMedicamento`: `dotnet run -- pruebas`.
 
 ## Avance
 
 | Parte | Estado |
 |---|---|
 | `Medicamento` de la Unidad 1 unido a `LoteMedicamento` | Hecho |
-| `Jaula` de la Unidad 1 retirada (su cobro por días quedó en `Hospitalizacion`) | Hecho |
+| `Jaula` de la Unidad 1 corregida | Hecho |
 | `IFacturable` | Hecho |
-| `LoteMedicamento` + pruebas | Hecho |
+| `LoteMedicamento` | Hecho |
 | `Servicio` (abstracta), `CitaVeterinaria`, `Hospitalizacion` | Hecho |
 | `Factura`, `RenglonFactura` | Hecho |
 | `Main` con los 8 pasos de la demostración | Hecho |
@@ -111,11 +110,6 @@ classDiagram
         +ValidarFacturacion(cantidad : int) void
     }
 
-    class PruebasLoteMedicamento {
-        <<static>>
-        +EjecutarTodas() void
-    }
-
     class Factura {
         -_renglones : List~RenglonFactura~
         +Numero : string
@@ -146,14 +140,36 @@ classDiagram
         Vacunas
     }
 
+    class Jaula {
+        +Codigo : string
+        +Tamano : TamanoJaula
+        +TarifaDia : decimal
+        +Ocupado : bool
+        +NombreMascota : string?
+        +DiasEstancia : int
+        +Jaula(codigo, tamano, tarifaDia)
+        +IngresarPaciente(nombreMascota : string) void
+        +SumarDiaEstancia() void
+        +CalcularCuenta() decimal
+        +DarDeAltaMedica() decimal
+        +ConsultarEstado() string
+    }
+
+    class TamanoJaula {
+        <<enumeration>>
+        Pequeno
+        Mediano
+        Grande
+    }
+
     Servicio ..|> IFacturable
     LoteMedicamento ..|> IFacturable
     Servicio <|-- CitaVeterinaria
     Servicio <|-- Hospitalizacion
     Factura "1" *-- "0..*" RenglonFactura : renglones
     RenglonFactura "0..*" o-- "1" IFacturable : cobra
-    PruebasLoteMedicamento ..> LoteMedicamento
     LoteMedicamento ..> TipoMedicamento
+    Jaula ..> TamanoJaula
 ```
 
 Los métodos con `*` son abstractos.
@@ -184,6 +200,7 @@ Los métodos con `*` son abstractos.
 | `Hospitalizacion` | El alta se da una sola vez y no puede ser anterior al ingreso |
 | `Servicio` | Siempre se factura como una unidad |
 | `Factura` | Una factura anulada no admite más renglones |
+| `Jaula` | No entra un segundo paciente a una jaula ocupada; se cobra mínimo un día |
 | `Factura` | Al agregar una consulta no se escribe la cantidad: el sistema asume 1 |
 | `LoteMedicamento` | Un lote vencido no se puede vender, ni una unidad |
 | `LoteMedicamento` | El día del vencimiento todavía se vende; desde el día siguiente no |

@@ -5,7 +5,7 @@ namespace PetCare
 {
     internal static class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Console.OutputEncoding = Encoding.UTF8;
             CultureInfo.CurrentCulture = new CultureInfo("es-CO");
@@ -13,12 +13,6 @@ namespace PetCare
             Console.WriteLine("=========================================");
             Console.WriteLine("      CLINICA VETERINARIA PETCARE 2.0");
             Console.WriteLine("=========================================");
-
-            if (args.Length > 0 && args[0] == "pruebas")
-            {
-                PruebasLoteMedicamento.EjecutarTodas();
-                return;
-            }
 
             DemostracionPetCare();
         }
