@@ -158,12 +158,13 @@ classDiagram
     }
 
     class Jaula {
+        -TarifasPorTamano : Dictionary~TamanoJaula, decimal~$
         +Codigo : string
         +Tamano : TamanoJaula
         +TarifaDia : decimal
         +Ocupante : Hospitalizacion?
         +Ocupado : bool
-        +Jaula(codigo, tamano, tarifaDia)
+        +Jaula(codigo, tamano)
         ~IngresarPaciente(hospitalizacion : Hospitalizacion) void
         ~Liberar() void
         +ConsultarEstado() string
@@ -222,7 +223,8 @@ Los métodos con `*` son abstractos.
 | `Hospitalizacion` | La tarifa diaria se toma de la jaula al ingresar; al dar de alta la jaula queda libre |
 | `Servicio` | Siempre se factura como una unidad |
 | `Factura` | Una factura anulada no admite más renglones |
-| `Jaula` | No entra un segundo paciente a una jaula ocupada; la tarifa depende del tamaño |
+| `Jaula` | No entra un segundo paciente a una jaula ocupada |
+| `Jaula` | La tarifa por día depende del tamaño: Pequeña $25.000, Mediana $38.000, Grande $52.000 |
 | `Factura` | Al agregar una consulta no se escribe la cantidad: el sistema asume 1 |
 | `LoteMedicamento` | Un lote vencido no se puede vender, ni una unidad |
 | `LoteMedicamento` | El día del vencimiento todavía se vende; desde el día siguiente no |

@@ -32,7 +32,11 @@ namespace PetCare
             Console.WriteLine($"  Costo de la consulta: {consulta.CalcularCosto():C0}");
 
             Console.WriteLine("\n[2] Hospitalizacion que ingreso hace 3 dias, alta hoy");
-            Jaula jaula = new Jaula("J-07", TamanoJaula.Mediano, 80000m);
+            Jaula jaulaPequena = new Jaula("J-03", TamanoJaula.Pequeno);
+            Jaula jaula = new Jaula("J-07", TamanoJaula.Mediano);
+            Jaula jaulaGrande = new Jaula("J-12", TamanoJaula.Grande);
+            Console.WriteLine($"  Tarifas por tamano: {jaulaPequena.Tamano} {jaulaPequena.TarifaDia:C0} | " +
+                $"{jaula.Tamano} {jaula.TarifaDia:C0} | {jaulaGrande.Tamano} {jaulaGrande.TarifaDia:C0}");
             Hospitalizacion hospitalizacion = new Hospitalizacion("HOS-132", "Trico", DateTime.Today.AddDays(-3), jaula);
             Console.WriteLine($"  Al ingresar: {jaula.ConsultarEstado()}");
             try

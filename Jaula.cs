@@ -2,6 +2,13 @@ namespace PetCare
 {
     public class Jaula
     {
+        private static readonly Dictionary<TamanoJaula, decimal> TarifasPorTamano = new()
+        {
+            { TamanoJaula.Pequeno, 25000m },
+            { TamanoJaula.Mediano, 38000m },
+            { TamanoJaula.Grande, 52000m }
+        };
+
         public string Codigo { get; }
         public TamanoJaula Tamano { get; }
         public decimal TarifaDia { get; }
@@ -10,20 +17,20 @@ namespace PetCare
 
         public bool Ocupado => Ocupante != null;
 
-        public Jaula(string codigo, TamanoJaula tamano, decimal tarifaDia)
+        public Jaula(string codigo, TamanoJaula tamano)
         {
             if (string.IsNullOrWhiteSpace(codigo))
             {
                 throw new ArgumentException("El codigo de la jaula es obligatorio");
             }
-            if (tarifaDia <= 0)
+            if (!TarifasPorTamano.ContainsKey(tamano))
             {
-                throw new ArgumentException("La tarifa por dia debe ser mayor que cero");
+                throw new ArgumentException("El tamano de la jaula no es valido");
             }
 
             Codigo = codigo.Trim();
             Tamano = tamano;
-            TarifaDia = tarifaDia;
+            TarifaDia = TarifasPorTamano[tamano];
         }
 
         internal void IngresarPaciente(Hospitalizacion hospitalizacion)
