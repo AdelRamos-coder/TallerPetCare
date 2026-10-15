@@ -11,7 +11,7 @@ namespace PetCare
             CultureInfo.CurrentCulture = new CultureInfo("es-CO");
 
             Console.WriteLine("=========================================");
-            Console.WriteLine("      CLINICA VETERINARIA PETCARE 2.0");
+            Console.WriteLine("      CLINICA VETERINARIA PETCARE");
             Console.WriteLine("=========================================");
 
             DemostracionPetCare();
