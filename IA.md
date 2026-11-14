@@ -1,6 +1,6 @@
 # Bitácora de uso de IA 
 
-Programación Orientada a Objetos · Unidad 2 · Producto PetCare 2.0
+Programación Orientada a Objetos · Unidad 2 (PetCare 2.0) y Unidad 3 (PetCare Web)
 
 Integrantes: Ader, Adel, Wilson y Luis
 
@@ -40,6 +40,19 @@ Cada vez que alguien usó una IA, agrega una fila con estas columnas:
 | 13/10/2026 | Adel | ChatGPT y Claude | Cómo controlar la cantidad que se puede facturar de cada cosa | Que cada clase valide su cantidad con ValidarFacturacion(cantidad) | ChatGPT proponía un bool PermiteCantidad. No lo usamos porque la factura tendría que preguntar con un if qué está cobrando; con el método, cada clase responde por sí misma y la factura no cambia cuando llegue algo nuevo |
 | 14/10/2026 | Adel | Claude | Si la relación entre Hospitalizacion y Jaula era composición o agregación | Agregación: la hospitalización recibe la jaula ya creada, la ocupa al ingresar y la libera al dar de alta | No usamos composición porque la jaula existe antes de que llegue el animal y sigue ahí cuando se va. Si la hospitalización la creara, cada animal tendría una jaula nueva, y la clínica tiene jaulas fijas |
 | 14/10/2026 | Adel | Claude | Cómo quitar el nombre de la mascota, que estaba repetido en Jaula y en Servicio | Que la jaula guarde a su ocupante (la hospitalización) y le pregunte el nombre, los días y la cuenta | Nosotros propusimos que Jaula heredara de Servicio, pero lo descartamos: una jaula no es un servicio, y si heredara se podría meter en la factura como si se cobrara la jaula |
+
+### Unidad 3 · PetCare Web
+
+| Fecha | Quién | Herramienta | Qué le pedimos | Qué usamos | Qué corregimos o no usamos y por qué |
+|---|---|---|---|---|---|
+| [COMPLETAR] | Adel | Claude | Script SQL de la base de datos a partir del diagrama de base de datos | El script BaseDeDatos.sql con tablas, llaves, UNIQUE, CHECK e índices | Le pedimos quitar los INSERT y el DROP TABLE: el script tenía que servir para crear la base por primera vez, y los datos iniciales los carga la migración |
+| [COMPLETAR] | Adel | Claude y Figma | Cinco propuestas de pantallas para los formularios F0 a F6 | El diseño 4, "Expediente clínico", como base de las pantallas | La primera entrega no eran cinco diseños distintos sino variaciones del mismo; se pidió rehacerlos. De la maqueta quitamos el buscador Ctrl K y el botón Imprimir porque ninguna historia de usuario los pide |
+| 14/11/2026 | Adel | Claude | Proponer la arquitectura de la Unidad 3 (proyectos, carpetas, clases nuevas) antes de escribir código | La separación en PetCare.Dominio y PetCareWeb, un servicio por formulario y una configuración por tabla | Propuso renombrar las clases a los nombres del diagrama (ServicioVeterinario, LineaFactura, AgregarLinea). No lo aceptamos: mantuvimos los nombres de la Unidad 2 y la equivalencia quedó explicada en DISENO.md. También descartamos una propiedad alias para Nombre porque no hacía falta |
+| 14/11/2026 | Adel | Claude | Decidir si la tarifa diaria de la hospitalización se escribe en el formulario o sale de la jaula | Que la tarifa salga del tamaño de la jaula y quede fija al ingresar, como en la Unidad 2 | La historia HU-05 habla de escribir la tarifa, pero la jaula ya la define; dejarla editable permitía tarifas distintas para la misma jaula. En la pantalla se muestra la tarifa sin poder cambiarla |
+| 14/11/2026 | Adel | Claude | Si al facturar un lote se debía descontar el stock | Nada: el stock no se descuenta al facturar | La IA preguntó si descontar; decidimos que no porque ninguna historia lo pide y al anular habría que devolver las unidades. La factura solo revisa que la cantidad no supere el stock |
+| 14/11/2026 | Adel | Claude | Código de PetCare Web: contexto de EF Core, configuraciones, servicios, páginas F0 a F6 y estilos | La base del proyecto que está en la rama main | La IA no pudo compilar ni generar la migración en su entorno. [COMPLETAR: errores de compilación que encontraron al abrirlo en Visual Studio y cómo los corrigieron] |
+| 14/11/2026 | Adel | Claude | Manejo de excepciones del formulario de citas para la evidencia de desempeño (estado antes y después) | ReglaNegocioException, CodigoDuplicadoException, el orden de los catch y el bloqueo del doble clic | La primera versión hacía que ReglaNegocioException heredara de InvalidOperationException; la cambiamos para que herede directamente de Exception, como pide la evidencia, y ajustamos los catch de Facturación e Inventario. [COMPLETAR: resultados de los ataques] |
+| 14/11/2026 | Adel | Claude | Revisar el dominio de la Unidad 2 contra las historias de la Unidad 3 | Las descripciones con tildes ("Hospitalización – Luna – 3 días") | En la Unidad 2 decidimos no usar tildes; en la Unidad 3 las agregamos porque HU-12 CA2 muestra el texto exacto con tildes |
 
 ## 4. Lo que aprendimos
 
