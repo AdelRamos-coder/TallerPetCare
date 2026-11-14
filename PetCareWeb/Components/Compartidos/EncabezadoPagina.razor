@@ -1,0 +1,37 @@
+@* Migas de pan, título de la página y, a la derecha, los botones de la página. *@
+<div class="migas">
+    <span>PetCare › @Ruta › <b>@Titulo</b></span>
+    <span>@Formato.FechaLarga(DateTime.Today)</span>
+</div>
+
+<header class="encabezado-pagina">
+    <div>
+        <h1>@Titulo</h1>
+        @if (!string.IsNullOrEmpty(Subtitulo))
+        {
+            <p>@Subtitulo</p>
+        }
+    </div>
+    @if (ChildContent != null)
+    {
+        <div class="encabezado-acciones">@ChildContent</div>
+    }
+</header>
+
+@code {
+    /// <summary>Grupo del menú, por ejemplo "Atención".</summary>
+    [Parameter, EditorRequired]
+    public string Ruta { get; set; } = string.Empty;
+
+    /// <summary>Título de la página.</summary>
+    [Parameter, EditorRequired]
+    public string Titulo { get; set; } = string.Empty;
+
+    /// <summary>Texto corto bajo el título.</summary>
+    [Parameter]
+    public string? Subtitulo { get; set; }
+
+    /// <summary>Botones de la página.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

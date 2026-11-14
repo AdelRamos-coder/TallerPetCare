@@ -1,0 +1,143 @@
+@page "/citas"
+
+<PageTitle>Citas de consulta · PetCare</PageTitle>
+
+<EncabezadoPagina Ruta="Atención" Titulo="Citas de consulta" Subtitulo="Registro, ajuste de duración, veterinario y estado" />
+
+<div class="rejilla-dos">
+    <Seccion Numero="I." Titulo="Registro de cita">
+        <EditForm Model="modelo" OnValidSubmit="RegistrarAsync" class="formulario">
+            <DataAnnotationsValidator />
+
+            <div class="campos dos">
+                <div class="campo">
+                    <label for="cita-codigo">Código</label>
+                    <InputText id="cita-codigo" @bind-Value="modelo.Codigo" placeholder="CIT-010" />
+                    <ValidationMessage For="() => modelo.Codigo" />
+                </div>
+                <div class="campo">
+                    <label for="cita-mascota">Mascota</label>
+                    <InputText id="cita-mascota" @bind-Value="modelo.NombreMascota" />
+                    <ValidationMessage For="() => modelo.NombreMascota" />
+                </div>
+                <div class="campo">
+                    <label for="cita-cedula">Cédula del cliente</label>
+                    <InputText id="cita-cedula" @bind-Value="modelo.CedulaCliente" inputmode="numeric" />
+                    <ValidationMessage For="() => modelo.CedulaCliente" />
+                </div>
+                <div class="campo">
+                    <label for="cita-fecha">Fecha y hora</label>
+                    <InputDate id="cita-fecha" Type="InputDateType.DateTimeLocal" @bind-Value="modelo.Fecha" />
+                    <ValidationMessage For="() => modelo.Fecha" />
+                </div>
+                <div class="campo completo">
+                    <label for="cita-motivo">Motivo</label>
+                    <InputText id="cita-motivo" @bind-Value="modelo.Motivo" />
+                    <ValidationMessage For="() => modelo.Motivo" />
+                </div>
+            </div>
+
+            <div class="acciones-formulario">
+                <button type="submit" class="btn primario">
+                    <Icono Nombre="mas" /> Registrar cita
+                </button>
+                <span class="pista">Inicia con 30 min, sin veterinario y Programada.</span>
+            </div>
+        </EditForm>
+
+        @if (mensajeRegistro != null)
+        {
+            <Nota Tipo="ok" Titulo="Cita registrada" Mensaje="@mensajeRegistro" AlCerrar="CerrarMensajes" />
+        }
+    </Seccion>
+
+    <Seccion Numero="III." Titulo="@TituloAjuste()">
+        @if (seleccionada == null)
+        {
+            <p class="vacio">Elige una cita de la lista para ajustar su duración, confirmar el veterinario o cambiar su estado.</p>
+        }
+        else
+        {
+            <div class="ajuste">
+                <div class="campo">
+                    <label for="cita-duracion">Duración (minutos)</label>
+                    <input id="cita-duracion" type="number" min="15" max="180" step="5"
+                           @bind="duracionNueva" @bind:after="CambiarDuracionAsync" />
+                    <span class="pista">Entre 15 y 180 minutos. Se guarda al salir del campo.</span>
+                </div>
+                <div class="valor-grande">
+                    <span>Valor</span>
+                    <b>@Formato.Moneda(seleccionada.CalcularCosto())</b>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label for="cita-veterinario">Veterinario</label>
+                <input id="cita-veterinario" type="text" @bind="veterinarioNuevo"
+                       placeholder="@(seleccionada.Veterinario ?? "Nombre del veterinario")" />
+            </div>
+
+            <div class="botonera">
+                <button type="button" class="btn primario" @onclick="ConfirmarVeterinarioAsync">
+                    <Icono Nombre="check" /> Confirmar veterinario
+                </button>
+                <button type="button" class="btn" @onclick="MarcarAtendidaAsync">Marcar atendida</button>
+                <button type="button" class="btn peligro-borde" @onclick="MarcarCanceladaAsync">
+                    <Icono Nombre="prohibido" /> Cancelar
+                </button>
+            </div>
+
+            @if (mensajeAjuste != null)
+            {
+                <Nota Tipo="ok" Titulo="Cambio guardado" Mensaje="@mensajeAjuste" AlCerrar="CerrarMensajes" />
+            }
+            @if (avisoAjuste != null)
+            {
+                <Nota Tipo="alerta" Titulo="No se hizo ningún cambio" Mensaje="@avisoAjuste" AlCerrar="CerrarMensajes" />
+            }
+
+            <p class="pista">Veterinario: se asigna una sola vez. Valor: $60.000 hasta 30 min y $1.500 por cada minuto adicional.</p>
+        }
+    </Seccion>
+</div>
+
+<Seccion Numero="II." Titulo="Citas registradas" Detalle="@($"{citas.Count} registros")">
+    @if (citas.Count == 0)
+    {
+        <p class="vacio">Todavía no hay citas registradas.</p>
+    }
+    else
+    {
+        <table class="tabla seleccionable">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Mascota</th>
+                    <th>Cédula</th>
+                    <th>Motivo</th>
+                    <th>Fecha</th>
+                    <th class="der">Min.</th>
+                    <th>Veterinario</th>
+                    <th>Estado</th>
+                    <th class="der">Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (CitaVeterinaria cita in citas)
+                {
+                    <tr class="@(cita.Id == seleccionada?.Id ? "elegida" : "")" @onclick="() => Seleccionar(cita)">
+                        <td><b>@cita.Codigo</b></td>
+                        <td>@cita.NombreMascota</td>
+                        <td>@cita.CedulaCliente</td>
+                        <td class="ajustable">@cita.Motivo</td>
+                        <td>@Formato.FechaHora(cita.Fecha)</td>
+                        <td class="der">@cita.DuracionMinutos</td>
+                        <td>@(cita.Veterinario ?? "Sin veterinario")</td>
+                        <td><InsigniaEstado Texto="@cita.Estado.ToString()" Tono="@Formato.TonoCita(cita.Estado)" /></td>
+                        <td class="der">@Formato.Moneda(cita.CalcularCosto())</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</Seccion>

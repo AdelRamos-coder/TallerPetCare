@@ -1,0 +1,102 @@
+@page "/"
+
+<PageTitle>Inicio · PetCare</PageTitle>
+
+<EncabezadoPagina Ruta="General" Titulo="Resumen del día" Subtitulo="@saludo" />
+
+@if (mensajeError != null)
+{
+    <Nota Tipo="error" Titulo="No pudimos cargar el resumen" Mensaje="@mensajeError" />
+}
+else if (cargando)
+{
+    <p class="cargando">Cargando el resumen...</p>
+}
+else
+{
+    <Seccion Numero="I." Titulo="Indicadores">
+        <div class="indicadores">
+            <div class="indicador">
+                <span>Citas de hoy</span>
+                <b>@citasHoy.Count</b>
+                <small>@TextoCanceladas()</small>
+            </div>
+            <div class="indicador">
+                <span>Jaulas ocupadas</span>
+                <b>@jaulasOcupadas.Count de @totalJaulas</b>
+                <small>@(jaulasOcupadas.Count == 0 ? "todas libres" : string.Join(", ", jaulasOcupadas.Select(j => j.Codigo)))</small>
+            </div>
+            <div class="indicador @(lotesVencidos.Count > 0 ? "alerta" : "")">
+                <span>Lotes vencidos</span>
+                <b>@lotesVencidos.Count</b>
+                <small>bloqueados para venta</small>
+            </div>
+            <div class="indicador">
+                <span>Facturado hoy</span>
+                <b>@Formato.Moneda(facturadoHoy)</b>
+                <small>sin contar anuladas</small>
+            </div>
+        </div>
+    </Seccion>
+
+    <div class="rejilla-resumen">
+        <Seccion Numero="II." Titulo="Agenda del día" Detalle="@($"{citasHoy.Count} citas")">
+            @if (citasHoy.Count == 0)
+            {
+                <p class="vacio">No hay citas programadas para hoy.</p>
+            }
+            else
+            {
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>Hora</th>
+                            <th>Mascota</th>
+                            <th>Motivo</th>
+                            <th>Veterinario</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (CitaVeterinaria cita in citasHoy)
+                        {
+                            <tr>
+                                <td>@cita.Fecha.ToString("HH:mm")</td>
+                                <td><b>@cita.NombreMascota</b></td>
+                                <td>@cita.Motivo</td>
+                                <td>@(cita.Veterinario ?? "Sin asignar")</td>
+                                <td><InsigniaEstado Texto="@cita.Estado.ToString()" Tono="@Formato.TonoCita(cita.Estado)" /></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </Seccion>
+
+        <Seccion Numero="III." Titulo="Avisos">
+            <div class="avisos">
+                <div>
+                    <b>Farmacia</b>
+                    <span>@AvisoFarmacia()</span>
+                </div>
+                <div>
+                    <b>Hospitalización</b>
+                    <span>@AvisoHospitalizacion()</span>
+                </div>
+                <div>
+                    <b>Caja</b>
+                    <span>@AvisoCaja()</span>
+                </div>
+            </div>
+        </Seccion>
+    </div>
+
+    <Seccion Numero="IV." Titulo="Accesos">
+        <div class="accesos">
+            <a class="btn" href="citas"><Icono Nombre="mas" /> Registrar cita</a>
+            <a class="btn" href="hospitalizaciones"><Icono Nombre="mas" /> Registrar ingreso</a>
+            <a class="btn" href="lotes"><Icono Nombre="mas" /> Registrar lote</a>
+            <a class="btn primario" href="facturacion"><Icono Nombre="mas" /> Nueva factura</a>
+        </div>
+    </Seccion>
+}

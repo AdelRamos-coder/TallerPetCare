@@ -1,0 +1,172 @@
+@page "/facturacion"
+@page "/facturacion/{Id:int}"
+
+<PageTitle>Facturación · PetCare</PageTitle>
+
+<EncabezadoPagina Ruta="Caja" Titulo="Facturación" Subtitulo="@(esAdministrador ? "Vista de la administradora" : "Creación de la factura y registro de renglones")">
+    @if (factura != null && esAdministrador && !factura.Anulada)
+    {
+        <button type="button" class="btn peligro-borde" @onclick="PedirConfirmacionAnular">
+            <Icono Nombre="prohibido" /> Anular factura
+        </button>
+    }
+    @if (factura != null)
+    {
+        <a class="btn primario" href="facturacion"><Icono Nombre="mas" /> Nueva factura</a>
+    }
+</EncabezadoPagina>
+
+@if (mensajeCarga != null)
+{
+    <Nota Tipo="error" Titulo="No pudimos abrir la factura" Mensaje="@mensajeCarga" />
+}
+
+<div class="rejilla-factura">
+    <div class="columna-formularios">
+        <Seccion Numero="I." Titulo="Datos de la factura">
+            @if (factura == null)
+            {
+                <EditForm Model="modeloFactura" OnValidSubmit="CrearAsync" class="formulario">
+                    <DataAnnotationsValidator />
+
+                    <div class="campo en-linea">
+                        <label for="fac-numero">Número</label>
+                        <div>
+                            <InputText id="fac-numero" @bind-Value="modeloFactura.Numero" placeholder="FAC-1001" />
+                            <ValidationMessage For="() => modeloFactura.Numero" />
+                        </div>
+                    </div>
+                    <div class="campo en-linea">
+                        <label for="fac-cliente">Cliente</label>
+                        <div>
+                            <InputText id="fac-cliente" @bind-Value="modeloFactura.NombreCliente" />
+                            <ValidationMessage For="() => modeloFactura.NombreCliente" />
+                        </div>
+                    </div>
+                    <div class="campo en-linea">
+                        <label for="fac-fecha">Fecha</label>
+                        <div>
+                            <InputDate id="fac-fecha" @bind-Value="modeloFactura.FechaEmision" />
+                            <ValidationMessage For="() => modeloFactura.FechaEmision" />
+                        </div>
+                    </div>
+
+                    <div class="acciones-formulario">
+                        <button type="submit" class="btn primario" disabled="@guardando">
+                            <Icono Nombre="mas" /> Crear factura
+                        </button>
+                        <span class="pista">Queda a nombre de @nombreUsuario. Empieza sin renglones y en $0.</span>
+                    </div>
+                </EditForm>
+            }
+            else
+            {
+                <dl class="datos-fijos">
+                    <div><dt>Número</dt><dd>@factura.Numero</dd></div>
+                    <div><dt>Cliente</dt><dd>@factura.NombreCliente</dd></div>
+                    <div><dt>Fecha</dt><dd>@Formato.Fecha(factura.FechaEmision)</dd></div>
+                    <div><dt>Emitida por</dt><dd>@factura.UsuarioEmisor.NombreCompleto</dd></div>
+                </dl>
+            }
+        </Seccion>
+
+        @if (factura != null)
+        {
+            <Seccion Numero="II." Titulo="Agregar renglón">
+                <EditForm Model="modeloServicio" OnValidSubmit="AgregarServicioAsync" class="formulario">
+                    <DataAnnotationsValidator />
+                    <div class="campo en-linea">
+                        <label for="fac-servicio">Servicio</label>
+                        <div>
+                            <InputSelect id="fac-servicio" @bind-Value="modeloServicio.ServicioId">
+                                <option value="0">Elegir cita u hospitalización</option>
+                                @foreach (Servicio servicio in servicios)
+                                {
+                                    <option value="@servicio.Id">@servicio.Codigo · @servicio.ObtenerDescripcion() · @Formato.Moneda(servicio.ObtenerPrecioUnitario())</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="() => modeloServicio.ServicioId" />
+                        </div>
+                    </div>
+                    <div class="acciones-formulario">
+                        <button type="submit" class="btn" disabled="@guardando">
+                            <Icono Nombre="mas" /> Agregar servicio
+                        </button>
+                        <span class="pista">Sin cantidad: un servicio se cobra como una unidad.</span>
+                    </div>
+                </EditForm>
+
+                <EditForm Model="modeloProducto" OnValidSubmit="AgregarProductoAsync" class="formulario separado">
+                    <DataAnnotationsValidator />
+                    <div class="campo en-linea">
+                        <label for="fac-lote">Lote</label>
+                        <div>
+                            <InputSelect id="fac-lote" @bind-Value="modeloProducto.ProductoId">
+                                <option value="0">Elegir lote de medicamento</option>
+                                @foreach (ProductoFarmacia producto in productos)
+                                {
+                                    <option value="@producto.Id">@producto.ObtenerDescripcion() · @Formato.Moneda(producto.ObtenerPrecioUnitario())</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="() => modeloProducto.ProductoId" />
+                        </div>
+                    </div>
+                    <div class="campo en-linea">
+                        <label for="fac-cantidad">Cantidad</label>
+                        <div>
+                            <InputNumber id="fac-cantidad" @bind-Value="modeloProducto.Cantidad" min="1" />
+                            <ValidationMessage For="() => modeloProducto.Cantidad" />
+                        </div>
+                    </div>
+                    <div class="acciones-formulario">
+                        <button type="submit" class="btn" disabled="@guardando">
+                            <Icono Nombre="mas" /> Agregar medicamento
+                        </button>
+                    </div>
+                </EditForm>
+
+                @if (mensajeError != null)
+                {
+                    <Nota Tipo="error" Titulo="@tituloError" Mensaje="@mensajeError" AlCerrar="CerrarMensajes" />
+                }
+                @if (mensajeOk != null)
+                {
+                    <Nota Tipo="ok" Titulo="Listo" Mensaje="@mensajeOk" AlCerrar="CerrarMensajes" />
+                }
+
+                <Nota Tipo="info" Titulo="Renglones">
+                    Los renglones solo se ven: no se editan ni se borran.
+                </Nota>
+            </Seccion>
+        }
+        else if (mensajeError != null)
+        {
+            <Nota Tipo="error" Titulo="@tituloError" Mensaje="@mensajeError" AlCerrar="CerrarMensajes" />
+        }
+    </div>
+
+    <div class="columna-documento">
+        @if (factura != null)
+        {
+            <FacturaImprimible Factura="factura" />
+        }
+        else
+        {
+            <div class="factura-vacia">
+                <p>La factura aparece aquí en cuanto la crees.</p>
+                <p class="pista">Número, cliente y fecha no se pueden cambiar después.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<DialogoConfirmacion Visible="confirmandoAnulacion"
+                     Titulo="@($"Anulación de la factura {factura?.Numero}")"
+                     TextoConfirmar="Confirmar anulación"
+                     Peligro="true"
+                     Ocupado="guardando"
+                     AlConfirmar="AnularAsync"
+                     AlCancelar="CancelarAnulacion">
+    <p>Esta acción no se puede deshacer. La factura quedará marcada como anulada y no admitirá más renglones.</p>
+    <p>Los servicios y lotes que tiene seguirán existiendo y podrán facturarse de nuevo en otra factura.</p>
+</DialogoConfirmacion>

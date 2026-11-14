@@ -1,0 +1,46 @@
+@* Íconos de trazo usados en la interfaz. Se dibujan con SVG para no depender de librerías externas. *@
+<svg class="icono" width="@Tamano" height="@Tamano" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+     stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    @switch (Nombre)
+    {
+        case "huella":
+            <circle cx="5.5" cy="9" r="2" />
+            <circle cx="9.5" cy="5" r="2" />
+            <circle cx="14.5" cy="5" r="2" />
+            <circle cx="18.5" cy="9" r="2" />
+            <path d="M12 11c-3 0-6.5 4.2-6.5 7 0 1.9 1.5 2.8 3.3 2.5 1.3-.2 2.1-.9 3.2-.9s1.9.7 3.2.9c1.8.3 3.3-.6 3.3-2.5 0-2.8-3.5-7-6.5-7z" fill="currentColor" stroke="none" />
+            break;
+        case "salir":
+            <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" />
+            <path d="M10 17l-5-5 5-5" />
+            <path d="M5 12h11" />
+            break;
+        case "mas":
+            <path d="M12 5v14M5 12h14" />
+            break;
+        case "check":
+            <path d="M5 12l5 5 9-10" />
+            break;
+        case "buscar":
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="M20 20l-4-4" />
+            break;
+        case "prohibido":
+            <circle cx="12" cy="12" r="8.5" />
+            <path d="M6 6l12 12" />
+            break;
+        default:
+            <circle cx="12" cy="12" r="2" />
+            break;
+    }
+</svg>
+
+@code {
+    /// <summary>Nombre del ícono: huella, salir, mas, check, buscar o prohibido.</summary>
+    [Parameter, EditorRequired]
+    public string Nombre { get; set; } = string.Empty;
+
+    /// <summary>Tamaño en píxeles.</summary>
+    [Parameter]
+    public int Tamano { get; set; } = 16;
+}

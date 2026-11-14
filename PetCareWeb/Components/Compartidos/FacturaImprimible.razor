@@ -1,0 +1,83 @@
+@* Factura con aspecto de documento de cobro. Se usa en Facturación (F4) y en el detalle (F5).
+   Cada renglón se describe y se cobra a través de IFacturable: la factura no pregunta de qué tipo es. *@
+<article class="factura @(Factura.Anulada ? "anulada" : "")">
+    @if (Factura.Anulada)
+    {
+        <div class="factura-sello" aria-hidden="true">ANULADA</div>
+    }
+
+    <header class="factura-cabecera">
+        <div class="factura-emisor">
+            <span class="sello-logo"><Icono Nombre="huella" Tamano="20" /></span>
+            <div>
+                <b>PetCare · Clínica veterinaria</b>
+                <small>Recepción · Documento de cobro</small>
+            </div>
+        </div>
+        <div class="factura-numero">
+            <small>Factura</small>
+            <b>@Factura.Numero</b>
+            @if (Factura.Anulada)
+            {
+                <InsigniaEstado Texto="Anulada" Tono="error" />
+            }
+            else
+            {
+                <InsigniaEstado Texto="Vigente" Tono="ok" />
+            }
+        </div>
+    </header>
+
+    <dl class="factura-datos">
+        <div><dt>Cliente</dt><dd>@Factura.NombreCliente</dd></div>
+        <div><dt>Fecha de emisión</dt><dd>@Formato.Fecha(Factura.FechaEmision)</dd></div>
+        <div><dt>Emitida por</dt><dd>@Factura.UsuarioEmisor.NombreCompleto</dd></div>
+    </dl>
+
+    <table class="tabla factura-renglones">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Descripción</th>
+                <th class="der">Cant.</th>
+                <th class="der">Valor unitario</th>
+                <th class="der">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Factura.Renglones.Count == 0)
+            {
+                <tr>
+                    <td colspan="5" class="vacio">La factura todavía no tiene renglones. Su total es $0.</td>
+                </tr>
+            }
+            @for (int i = 0; i < Factura.Renglones.Count; i++)
+            {
+                RenglonFactura renglon = Factura.Renglones[i];
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td class="ajustable">@renglon.Descripcion</td>
+                    <td class="der">@renglon.Cantidad</td>
+                    <td class="der">@Formato.Moneda(renglon.PrecioUnitario)</td>
+                    <td class="der">@Formato.Moneda(renglon.Subtotal)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="factura-total">
+        <span>Total</span>
+        <b>@Formato.Moneda(Factura.Total)</b>
+    </div>
+
+    <footer class="factura-firmas">
+        <span>Firma de quien emite</span>
+        <span>Firma del cliente</span>
+    </footer>
+</article>
+
+@code {
+    /// <summary>Factura con su emisor y sus renglones ya cargados.</summary>
+    [Parameter, EditorRequired]
+    public Factura Factura { get; set; } = default!;
+}

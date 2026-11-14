@@ -1,0 +1,15 @@
+@page "/error"
+@attribute [AllowAnonymous]
+@attribute [ExcludeFromInteractiveRouting]
+@layout LayoutAcceso
+
+<PageTitle>Error · PetCare</PageTitle>
+
+<div class="acceso">
+    <section class="acceso-tarjeta">
+        <h1>Algo salió mal</h1>
+        <Nota Tipo="error" Titulo="No pudimos completar la operación"
+              Mensaje="El sistema tuvo un problema inesperado. Vuelve a la pantalla de inicio e inténtalo de nuevo; si se repite, avisa a la administración." />
+        <a class="btn primario ancho" href="">Volver al inicio</a>
+    </section>
+</div>

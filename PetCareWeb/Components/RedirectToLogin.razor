@@ -1,0 +1,10 @@
+@inject NavigationManager Navegacion
+
+@code {
+    // Sin sesión no se ve ninguna pantalla: se envía al inicio de sesión y luego se vuelve aquí.
+    protected override void OnInitialized()
+    {
+        string destino = "/" + Navegacion.ToBaseRelativePath(Navegacion.Uri);
+        Navegacion.NavigateTo($"iniciar-sesion?ReturnUrl={Uri.EscapeDataString(destino)}", forceLoad: true);
+    }
+}

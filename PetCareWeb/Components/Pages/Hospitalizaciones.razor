@@ -1,0 +1,195 @@
+@page "/hospitalizaciones"
+
+<PageTitle>Hospitalizaciones · PetCare</PageTitle>
+
+<EncabezadoPagina Ruta="Atención" Titulo="Hospitalizaciones" Subtitulo="Ingreso a jaula, estadía y alta con valor a cobrar" />
+
+@if (mensajeError != null)
+{
+    <Nota Tipo="error" Titulo="@tituloError" Mensaje="@mensajeError" AlCerrar="CerrarMensajes" />
+}
+@if (mensajeOk != null)
+{
+    <Nota Tipo="ok" Titulo="Listo" Mensaje="@mensajeOk" AlCerrar="CerrarMensajes" />
+}
+
+<div class="rejilla-dos">
+    <Seccion Numero="I." Titulo="Ingreso">
+        <EditForm Model="modelo" OnValidSubmit="RegistrarIngresoAsync" class="formulario">
+            <DataAnnotationsValidator />
+
+            <div class="campos dos">
+                <div class="campo">
+                    <label for="hos-codigo">Código</label>
+                    <InputText id="hos-codigo" @bind-Value="modelo.Codigo" placeholder="HOS-133" />
+                    <ValidationMessage For="() => modelo.Codigo" />
+                </div>
+                <div class="campo">
+                    <label for="hos-mascota">Mascota</label>
+                    <InputText id="hos-mascota" @bind-Value="modelo.NombreMascota" />
+                    <ValidationMessage For="() => modelo.NombreMascota" />
+                </div>
+                <div class="campo">
+                    <label for="hos-ingreso">Ingreso</label>
+                    <InputDate id="hos-ingreso" Type="InputDateType.DateTimeLocal" @bind-Value="modelo.FechaIngreso" />
+                    <ValidationMessage For="() => modelo.FechaIngreso" />
+                </div>
+                <div class="campo">
+                    <label for="hos-jaula">Jaula</label>
+                    <InputSelect id="hos-jaula" @bind-Value="modelo.JaulaId">
+                        <option value="0">Elegir una jaula libre</option>
+                        @foreach (EstadoJaula jaula in jaulas.Where(j => !j.Ocupada))
+                        {
+                            <option value="@jaula.Id">@jaula.Codigo (@Formato.TextoTamano(jaula.Tamano))</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => modelo.JaulaId" />
+                </div>
+                <div class="campo completo">
+                    <label>Tarifa diaria</label>
+                    <span class="solo-lectura">@TextoTarifa()</span>
+                </div>
+            </div>
+
+            <div class="acciones-formulario">
+                <button type="submit" class="btn primario" disabled="@guardando">
+                    <Icono Nombre="mas" /> Registrar ingreso
+                </button>
+                <span class="pista">Queda hospitalizada, sin fecha de alta.</span>
+            </div>
+        </EditForm>
+    </Seccion>
+
+    <Seccion Numero="III." Titulo="@TituloAlta()">
+        @if (seleccionada == null)
+        {
+            <p class="vacio">Elige una estadía de la lista para ver sus días y registrar el alta.</p>
+        }
+        else
+        {
+            <div class="campo">
+                <label for="hos-alta">Fecha de alta</label>
+                <input id="hos-alta" type="datetime-local" @bind="fechaAlta" />
+            </div>
+
+            <table class="tabla concepto">
+                <thead>
+                    <tr>
+                        <th>Concepto</th>
+                        <th class="der">Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Días de estadía (@Formato.Fecha(seleccionada.Fecha) al @Formato.Fecha(seleccionada.FechaAlta ?? DateTime.Today))</td>
+                        <td class="der">@seleccionada.CalcularDias()</td>
+                    </tr>
+                    <tr>
+                        <td>Tarifa diaria jaula @seleccionada.Jaula.Codigo (@Formato.TextoTamano(seleccionada.Jaula.Tamano))</td>
+                        <td class="der">@Formato.Moneda(seleccionada.TarifaDiaria)</td>
+                    </tr>
+                    <tr class="total">
+                        <td>Valor a cobrar</td>
+                        <td class="der">@Formato.Moneda(seleccionada.CalcularCosto())</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="acciones-formulario">
+                <button type="button" class="btn primario" disabled="@guardando" @onclick="PedirConfirmacionAlta">Registrar alta</button>
+                <span class="pista">
+                    @if (seleccionada.FechaAlta == null)
+                    {
+                        @($"La jaula {seleccionada.Jaula.Codigo} queda libre.")
+                    }
+                    else
+                    {
+                        @($"Ya tiene alta desde el {Formato.FechaHora(seleccionada.FechaAlta.Value)}.")
+                    }
+                </span>
+            </div>
+            <p class="pista">Mientras siga hospitalizada se cuentan los días hasta hoy. Menos de un día se cobra como uno.</p>
+        }
+    </Seccion>
+</div>
+
+<div class="rejilla-ancha">
+    <Seccion Numero="II." Titulo="Estadías" Detalle="@($"{hospitalizaciones.Count} registros")">
+        @if (hospitalizaciones.Count == 0)
+        {
+            <p class="vacio">Todavía no hay hospitalizaciones registradas.</p>
+        }
+        else
+        {
+            <table class="tabla seleccionable">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Mascota</th>
+                        <th>Jaula</th>
+                        <th class="der">Tarifa</th>
+                        <th>Ingreso</th>
+                        <th class="der">Días</th>
+                        <th>Estado</th>
+                        <th class="der">Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Hospitalizacion hospitalizacion in hospitalizaciones)
+                    {
+                        <tr class="@(hospitalizacion.Id == seleccionada?.Id ? "elegida" : "")" @onclick="() => Seleccionar(hospitalizacion)">
+                            <td><b>@hospitalizacion.Codigo</b></td>
+                            <td>@hospitalizacion.NombreMascota</td>
+                            <td>@hospitalizacion.Jaula.Codigo (@Formato.TextoTamano(hospitalizacion.Jaula.Tamano))</td>
+                            <td class="der">@Formato.Moneda(hospitalizacion.TarifaDiaria)</td>
+                            <td>@Formato.Fecha(hospitalizacion.Fecha)</td>
+                            <td class="der">@hospitalizacion.CalcularDias()</td>
+                            <td>
+                                @if (hospitalizacion.FechaAlta == null)
+                                {
+                                    <InsigniaEstado Texto="Hospitalizada" Tono="info" />
+                                }
+                                else
+                                {
+                                    <InsigniaEstado Texto="Dada de alta" Tono="ok" />
+                                }
+                            </td>
+                            <td class="der">@Formato.Moneda(hospitalizacion.CalcularCosto())</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </Seccion>
+
+    <Seccion Numero="IV." Titulo="Jaulas por tamaño">
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>Tamaño</th>
+                    <th class="der">Tarifa</th>
+                    <th>Ocupadas</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (IGrouping<TamanoJaula, EstadoJaula> grupo in jaulas.GroupBy(j => j.Tamano))
+                {
+                    <tr>
+                        <td>@Formato.TextoTamano(grupo.Key)</td>
+                        <td class="der">@Formato.Moneda(grupo.First().TarifaDia)</td>
+                        <td>@TextoOcupadas(grupo)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Seccion>
+</div>
+
+<DialogoConfirmacion Visible="confirmandoAlta"
+                     Titulo="@($"Alta de {seleccionada?.Codigo} · {seleccionada?.NombreMascota}")"
+                     TextoConfirmar="Registrar alta"
+                     Ocupado="guardando"
+                     AlConfirmar="DarDeAltaAsync"
+                     AlCancelar="CancelarAlta">
+    <p>Se registrará el alta con fecha @(fechaAlta.ToString("dd/MM/yyyy HH:mm")). El alta se da una sola vez y la jaula queda libre para otro paciente.</p>
+</DialogoConfirmacion>

@@ -1,0 +1,33 @@
+@* Sección numerada al estilo de expediente: "I. Registro de cita". *@
+<section class="seccion @Clase">
+    <h2>
+        <em>@Numero</em>
+        <span>@Titulo</span>
+        @if (!string.IsNullOrEmpty(Detalle))
+        {
+            <small>@Detalle</small>
+        }
+    </h2>
+    @ChildContent
+</section>
+
+@code {
+    /// <summary>Número romano de la sección, por ejemplo "I.".</summary>
+    [Parameter, EditorRequired]
+    public string Numero { get; set; } = string.Empty;
+
+    /// <summary>Título de la sección.</summary>
+    [Parameter, EditorRequired]
+    public string Titulo { get; set; } = string.Empty;
+
+    /// <summary>Texto pequeño a la derecha, por ejemplo "4 registros".</summary>
+    [Parameter]
+    public string? Detalle { get; set; }
+
+    /// <summary>Clase CSS adicional.</summary>
+    [Parameter]
+    public string? Clase { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

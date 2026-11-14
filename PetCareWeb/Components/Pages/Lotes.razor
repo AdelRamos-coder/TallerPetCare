@@ -1,0 +1,125 @@
+@page "/lotes"
+
+<PageTitle>Lotes de medicamento · PetCare</PageTitle>
+
+<EncabezadoPagina Ruta="Farmacia" Titulo="Lotes de medicamento" Subtitulo="Registro de lotes y control de vencimiento y existencias" />
+
+<Seccion Numero="I." Titulo="Registro de lote">
+    <EditForm Model="modelo" OnValidSubmit="RegistrarAsync" class="formulario">
+        <DataAnnotationsValidator />
+
+        <div class="campos tres">
+            <div class="campo">
+                <label for="lote-codigo">Código</label>
+                <InputText id="lote-codigo" @bind-Value="modelo.Codigo" placeholder="L-204" />
+                <ValidationMessage For="() => modelo.Codigo" />
+            </div>
+            <div class="campo">
+                <label for="lote-nombre">Medicamento</label>
+                <InputText id="lote-nombre" @bind-Value="modelo.NombreMedicamento" placeholder="Tramadol 50 mg" />
+                <ValidationMessage For="() => modelo.NombreMedicamento" />
+            </div>
+            <div class="campo">
+                <label for="lote-tipo">Tipo</label>
+                <InputSelect id="lote-tipo" @bind-Value="modelo.Tipo">
+                    <option value="">Elegir tipo</option>
+                    @foreach (TipoMedicamento tipo in Enum.GetValues<TipoMedicamento>())
+                    {
+                        <option value="@tipo">@Formato.TextoTipoMedicamento(tipo)</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => modelo.Tipo" />
+            </div>
+            <div class="campo">
+                <label for="lote-vence">Vence</label>
+                <InputDate id="lote-vence" @bind-Value="modelo.FechaVencimiento" />
+                <ValidationMessage For="() => modelo.FechaVencimiento" />
+            </div>
+            <div class="campo">
+                <label for="lote-precio">Precio por unidad</label>
+                <InputNumber id="lote-precio" @bind-Value="modelo.PrecioUnitario" min="1" />
+                <ValidationMessage For="() => modelo.PrecioUnitario" />
+            </div>
+            <div class="campo">
+                <label for="lote-unidades">Unidades</label>
+                <InputNumber id="lote-unidades" @bind-Value="modelo.StockInicial" min="0" />
+                <ValidationMessage For="() => modelo.StockInicial" />
+            </div>
+        </div>
+
+        <div class="acciones-formulario">
+            <label class="casilla">
+                <InputCheckbox @bind-Value="modelo.EnNevera" /> Requiere nevera
+            </label>
+            <button type="submit" class="btn primario" disabled="@guardando">
+                <Icono Nombre="mas" /> Registrar lote
+            </button>
+            <span class="pista">Se puede registrar un lote vencido para control de bodega, pero no se podrá vender.</span>
+        </div>
+    </EditForm>
+
+    @if (mensajeError != null)
+    {
+        <Nota Tipo="error" Titulo="@tituloError" Mensaje="@mensajeError" AlCerrar="CerrarMensajes" />
+    }
+    @if (mensajeOk != null)
+    {
+        <Nota Tipo="ok" Titulo="Lote registrado" Mensaje="@mensajeOk" AlCerrar="CerrarMensajes" />
+    }
+</Seccion>
+
+<Seccion Numero="II." Titulo="Lotes registrados" Detalle="@DetalleLista()">
+    @if (lotes.Count == 0)
+    {
+        <p class="vacio">Todavía no hay lotes registrados.</p>
+    }
+    else
+    {
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Medicamento</th>
+                    <th>Tipo</th>
+                    <th>Vence</th>
+                    <th class="der">Unid.</th>
+                    <th>Conservación</th>
+                    <th class="der">Precio</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (LoteMedicamento lote in lotes)
+                {
+                    <tr class="@(lote.EstaVencido() ? "vencido" : "")">
+                        <td><b>@lote.Codigo</b></td>
+                        <td>@lote.NombreMedicamento</td>
+                        <td>@Formato.TextoTipoMedicamento(lote.Tipo)</td>
+                        <td>@Formato.Fecha(lote.FechaVencimiento)</td>
+                        <td class="der">@lote.StockActual</td>
+                        <td>@(lote.EnNevera ? "Nevera" : "Ambiente")</td>
+                        <td class="der">@Formato.Moneda(lote.PrecioUnitario)</td>
+                        <td>
+                            @if (lote.EstaVencido())
+                            {
+                                <InsigniaEstado Texto="Vencido" Tono="error" />
+                            }
+                            else if (lote.NecesitaReabastecimiento())
+                            {
+                                <InsigniaEstado Texto="Pedir más" Tono="alerta" />
+                            }
+                            else
+                            {
+                                <InsigniaEstado Texto="Vigente" Tono="ok" />
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <Nota Tipo="info" Titulo="Nota">
+        Los lotes vencidos aparecen en rojo: quedan en la bodega pero no pueden agregarse a una factura. Con menos de 10 unidades se marca Pedir más.
+    </Nota>
+</Seccion>

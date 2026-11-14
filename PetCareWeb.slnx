@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="PetCare.Dominio/PetCare.Dominio.csproj" />
+  <Project Path="PetCareWeb/PetCareWeb.csproj" />
+</Solution>

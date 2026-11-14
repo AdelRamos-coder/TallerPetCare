@@ -1,0 +1,54 @@
+@page "/iniciar-sesion"
+@attribute [AllowAnonymous]
+@attribute [ExcludeFromInteractiveRouting]
+@layout LayoutAcceso
+
+<PageTitle>Iniciar sesión · PetCare</PageTitle>
+
+<div class="acceso">
+    <section class="acceso-tarjeta">
+        <div class="acceso-marca">
+            <span class="sello-logo grande"><Icono Nombre="huella" Tamano="26" /></span>
+            <div>
+                <b>PetCare</b>
+                <small>Expediente clínico veterinario</small>
+            </div>
+        </div>
+
+        <h1>Acceso al sistema</h1>
+
+        @if (mensajeError != null)
+        {
+            <Nota Tipo="error" Titulo="No pudimos iniciar sesión" Mensaje="@mensajeError" />
+        }
+
+        <EditForm Model="Modelo" FormName="inicio-sesion" OnValidSubmit="IngresarAsync" method="post" class="formulario">
+            <DataAnnotationsValidator />
+
+            <div class="campo en-linea">
+                <label for="usuario">Usuario</label>
+                <div>
+                    <InputText id="usuario" @bind-Value="Modelo.NombreUsuario" autocomplete="username" autofocus />
+                    <ValidationMessage For="() => Modelo.NombreUsuario" />
+                </div>
+            </div>
+
+            <div class="campo en-linea">
+                <label for="contrasena">Contraseña</label>
+                <div>
+                    <InputText id="contrasena" type="password" @bind-Value="Modelo.Contrasena" autocomplete="current-password" />
+                    <ValidationMessage For="() => Modelo.Contrasena" />
+                </div>
+            </div>
+
+            <button type="submit" class="btn primario ancho">Ingresar</button>
+        </EditForm>
+
+        <p class="pista centrada">Para recuperar el acceso, comuníquese con la administración de la clínica.</p>
+    </section>
+
+    <aside class="acceso-lema">
+        <p class="cita-lema">“Un registro claro es parte del cuidado.”</p>
+        <p>Pantallas con aspecto de expediente: fondo de papel blanco, texto oscuro y secciones numeradas para leer rápido entre consulta y consulta.</p>
+    </aside>
+</div>

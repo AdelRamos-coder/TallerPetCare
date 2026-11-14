@@ -1,0 +1,49 @@
+@* Tabla de elementos facturables. Usa solo el contrato IFacturable: código, descripción y precio. *@
+@if (Filas.Count == 0)
+{
+    <p class="vacio">@TextoVacio</p>
+}
+else
+{
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descripción para la factura</th>
+                <th class="der">Precio</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (FilaInventario fila in Filas)
+            {
+                <tr class="@(fila.Facturable ? "" : "bloqueado")">
+                    <td><b>@fila.Item.Codigo</b></td>
+                    <td class="ajustable">@fila.Item.ObtenerDescripcion()</td>
+                    <td class="der">@Formato.Moneda(fila.Item.ObtenerPrecioUnitario())</td>
+                    <td>
+                        @if (fila.Facturable)
+                        {
+                            <InsigniaEstado Texto="Facturable" Tono="ok" />
+                        }
+                        else
+                        {
+                            <span title="@fila.MotivoBloqueo"><InsigniaEstado Texto="No facturable" Tono="error" /></span>
+                            <small class="motivo">@fila.MotivoBloqueo</small>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    /// <summary>Elementos a mostrar.</summary>
+    [Parameter, EditorRequired]
+    public List<FilaInventario> Filas { get; set; } = new();
+
+    /// <summary>Texto cuando no hay elementos.</summary>
+    [Parameter]
+    public string TextoVacio { get; set; } = "No hay elementos.";
+}

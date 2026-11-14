@@ -1,0 +1,72 @@
+@page "/facturas/{Id:int}"
+
+<PageTitle>@(factura?.Numero ?? "Factura") · PetCare</PageTitle>
+
+<EncabezadoPagina Ruta="Caja › Consulta" Titulo="@(factura?.Numero ?? "Factura")" Subtitulo="Detalle de la factura">
+    @if (factura != null && esAdministrador && !factura.Anulada)
+    {
+        <button type="button" class="btn peligro-borde" @onclick="PedirConfirmacionAnular">
+            <Icono Nombre="prohibido" /> Anular factura
+        </button>
+    }
+    <a class="btn" href="facturas">Volver a resultados</a>
+</EncabezadoPagina>
+
+@if (mensajeCarga != null)
+{
+    <Nota Tipo="error" Titulo="No pudimos abrir la factura" Mensaje="@mensajeCarga" />
+}
+else if (factura != null)
+{
+    <div class="rejilla-detalle">
+        <FacturaImprimible Factura="factura" />
+
+        <aside class="panel-lateral">
+            @if (mensajeError != null)
+            {
+                <Nota Tipo="error" Titulo="@tituloError" Mensaje="@mensajeError" AlCerrar="CerrarMensajes" />
+            }
+            @if (mensajeOk != null)
+            {
+                <Nota Tipo="ok" Titulo="Listo" Mensaje="@mensajeOk" AlCerrar="CerrarMensajes" />
+            }
+
+            @if (factura.Anulada)
+            {
+                <Nota Tipo="error" Titulo="Factura anulada">
+                    No se le pueden agregar renglones. Sus servicios y lotes siguen existiendo y se pueden cobrar en una factura nueva.
+                </Nota>
+                <a class="btn primario ancho" href="facturacion"><Icono Nombre="mas" /> Crear factura nueva</a>
+            }
+            else
+            {
+                <Nota Tipo="ok" Titulo="Factura vigente">
+                    Se pueden seguir agregando renglones desde Facturación.
+                </Nota>
+                <a class="btn primario ancho" href="facturacion/@factura.Id">Abrir en Facturación</a>
+            }
+
+            <dl class="datos-fijos">
+                <div><dt>Emitida por</dt><dd>@factura.UsuarioEmisor.NombreCompleto</dd></div>
+                <div><dt>Fecha</dt><dd>@Formato.Fecha(factura.FechaEmision)</dd></div>
+                <div><dt>Renglones</dt><dd>@factura.Renglones.Count</dd></div>
+                <div><dt>Total</dt><dd>@Formato.Moneda(factura.Total)</dd></div>
+            </dl>
+        </aside>
+    </div>
+
+    <DialogoConfirmacion Visible="confirmandoAnulacion"
+                         Titulo="@($"Anulación de la factura {factura.Numero}")"
+                         TextoConfirmar="Confirmar anulación"
+                         Peligro="true"
+                         Ocupado="guardando"
+                         AlConfirmar="AnularAsync"
+                         AlCancelar="CancelarAnulacion">
+        <p>Esta acción no se puede deshacer. La factura quedará marcada como anulada y no admitirá más renglones.</p>
+        <p>Los servicios y lotes que tiene seguirán existiendo y podrán facturarse de nuevo en otra factura.</p>
+    </DialogoConfirmacion>
+}
+else
+{
+    <p class="cargando">Cargando la factura...</p>
+}

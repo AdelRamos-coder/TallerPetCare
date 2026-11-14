@@ -1,0 +1,63 @@
+@inherits LayoutComponentBase
+
+<div class="marco">
+    <header class="cabecera">
+        <a class="marca" href="">
+            <span class="sello-logo"><Icono Nombre="huella" Tamano="20" /></span>
+            <span>
+                <b>PetCare</b>
+                <small>Expediente clínico</small>
+            </span>
+        </a>
+
+        <AuthorizeView>
+            <Authorized>
+                <div class="sesion">
+                    <span class="sesion-nombre">
+                        <b>@context.User.ObtenerNombreCompleto()</b>
+                        <small>@Formato.TextoRol(context.User.ObtenerRol())</small>
+                    </span>
+                    <span class="avatar">@Formato.Iniciales(context.User.ObtenerNombreCompleto())</span>
+                    <form method="post" action="cerrar-sesion">
+                        <AntiforgeryToken />
+                        <button type="submit" class="boton-salir" title="Cerrar sesión">
+                            <Icono Nombre="salir" Tamano="18" />
+                            <span>Salir</span>
+                        </button>
+                    </form>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+    </header>
+
+    <aside class="indice">
+        <nav aria-label="Menú principal">
+            <span class="indice-grupo">General</span>
+            <NavLink href="" Match="NavLinkMatch.All">Inicio</NavLink>
+            <NavLink href="inventario">Inventario</NavLink>
+
+            <span class="indice-grupo">Atención</span>
+            <NavLink href="citas">Citas</NavLink>
+            <NavLink href="hospitalizaciones">Hospitalización</NavLink>
+
+            <span class="indice-grupo">Farmacia</span>
+            <NavLink href="lotes">Lotes</NavLink>
+
+            <span class="indice-grupo">Caja</span>
+            <NavLink href="facturacion">Facturación</NavLink>
+            <NavLink href="facturas">Consulta de facturas</NavLink>
+        </nav>
+    </aside>
+
+    <main class="contenido">
+        <div class="hoja">
+            @Body
+        </div>
+    </main>
+</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    Ocurrió un error inesperado y la pantalla dejó de responder.
+    <a href="." class="reload">Recargar</a>
+    <span class="dismiss">×</span>
+</div>

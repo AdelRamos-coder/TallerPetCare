@@ -1,0 +1,25 @@
+@page "/inventario"
+
+<PageTitle>Inventario · PetCare</PageTitle>
+
+<EncabezadoPagina Ruta="General" Titulo="Inventario" Subtitulo="Relación de servicios y productos facturables" />
+
+@if (mensajeError != null)
+{
+    <Nota Tipo="error" Titulo="No pudimos cargar el inventario" Mensaje="@mensajeError" />
+}
+else
+{
+    <Seccion Numero="I." Titulo="Servicios" Detalle="@servicios.Count.ToString()">
+        <TablaInventario Filas="servicios" TextoVacio="Todavía no hay servicios registrados." />
+    </Seccion>
+
+    <Seccion Numero="II." Titulo="Productos" Detalle="@productos.Count.ToString()">
+        <TablaInventario Filas="productos" TextoVacio="Todavía no hay productos registrados." />
+    </Seccion>
+
+    <Nota Tipo="info" Titulo="Ampliación">
+        Si la clínica agrega vacunación o alimentos, aparecen aquí sin modificar la pantalla (HU-18).
+        La descripción y el precio los da cada objeto, y el estado sale de preguntarle si se puede facturar.
+    </Nota>
+}

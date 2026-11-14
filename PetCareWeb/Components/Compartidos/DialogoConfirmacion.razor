@@ -1,0 +1,71 @@
+@* Ventana que pide confirmar una acción que no se puede deshacer.
+   El padre decide qué pasa con AlConfirmar y AlCancelar. *@
+@if (Visible)
+{
+    <div class="velo" @onclick="CancelarAsync"></div>
+    <div class="dialogo" role="dialog" aria-modal="true" aria-labelledby="dialogo-titulo">
+        <span class="dialogo-etiqueta">@Etiqueta</span>
+        <h2 id="dialogo-titulo">@Titulo</h2>
+        <div class="dialogo-cuerpo">@ChildContent</div>
+        <div class="dialogo-acciones">
+            <button type="button" class="btn" disabled="@Ocupado" @onclick="CancelarAsync">@TextoCancelar</button>
+            <button type="button" class="btn @(Peligro ? "peligro" : "primario")" disabled="@Ocupado" @onclick="ConfirmarAsync">
+                @TextoConfirmar
+            </button>
+        </div>
+    </div>
+}
+
+@code {
+    /// <summary>Indica si la ventana se muestra.</summary>
+    [Parameter]
+    public bool Visible { get; set; }
+
+    /// <summary>Título de la ventana.</summary>
+    [Parameter, EditorRequired]
+    public string Titulo { get; set; } = string.Empty;
+
+    /// <summary>Etiqueta pequeña sobre el título.</summary>
+    [Parameter]
+    public string Etiqueta { get; set; } = "Confirmación requerida";
+
+    /// <summary>Texto del botón que confirma.</summary>
+    [Parameter]
+    public string TextoConfirmar { get; set; } = "Confirmar";
+
+    /// <summary>Texto del botón que cancela.</summary>
+    [Parameter]
+    public string TextoCancelar { get; set; } = "Volver";
+
+    /// <summary>Pinta el botón de confirmar en rojo (acciones como anular).</summary>
+    [Parameter]
+    public bool Peligro { get; set; }
+
+    /// <summary>Desactiva los botones mientras el padre guarda.</summary>
+    [Parameter]
+    public bool Ocupado { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>El usuario confirmó.</summary>
+    [Parameter]
+    public EventCallback AlConfirmar { get; set; }
+
+    /// <summary>El usuario canceló; no debe pasar nada.</summary>
+    [Parameter]
+    public EventCallback AlCancelar { get; set; }
+
+    private async Task ConfirmarAsync()
+    {
+        await AlConfirmar.InvokeAsync();
+    }
+
+    private async Task CancelarAsync()
+    {
+        if (!Ocupado)
+        {
+            await AlCancelar.InvokeAsync();
+        }
+    }
+}

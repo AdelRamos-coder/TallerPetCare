@@ -1,0 +1,12 @@
+@* Etiqueta de estado: PROGRAMADA, VENCIDO, ANULADA... El tono define el color. *@
+<span class="insignia @Tono">@Texto</span>
+
+@code {
+    /// <summary>Texto de la etiqueta.</summary>
+    [Parameter, EditorRequired]
+    public string Texto { get; set; } = string.Empty;
+
+    /// <summary>Color: ok (verde), alerta (ámbar), error (rojo), neutro (gris) o info (azul).</summary>
+    [Parameter]
+    public string Tono { get; set; } = "neutro";
+}

@@ -1,0 +1,36 @@
+@* Aviso con borde de color. Si el padre pasa AlCerrar, aparece la equis para cerrarlo. *@
+<div class="nota @Tipo" role="@(Tipo == "error" ? "alert" : "status")">
+    <div class="nota-texto">
+        <b>@Titulo</b>
+        @if (!string.IsNullOrEmpty(Mensaje))
+        {
+            <span>@Mensaje</span>
+        }
+        @ChildContent
+    </div>
+    @if (AlCerrar.HasDelegate)
+    {
+        <button type="button" class="nota-cerrar" title="Cerrar aviso" @onclick="AlCerrar">×</button>
+    }
+</div>
+
+@code {
+    /// <summary>Tipo de aviso: error, ok, alerta o info.</summary>
+    [Parameter]
+    public string Tipo { get; set; } = "info";
+
+    /// <summary>Título en negrilla.</summary>
+    [Parameter, EditorRequired]
+    public string Titulo { get; set; } = string.Empty;
+
+    /// <summary>Texto del aviso.</summary>
+    [Parameter]
+    public string? Mensaje { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Avisa al padre que el usuario cerró el aviso.</summary>
+    [Parameter]
+    public EventCallback AlCerrar { get; set; }
+}

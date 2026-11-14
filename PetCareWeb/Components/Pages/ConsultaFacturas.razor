@@ -1,0 +1,74 @@
+@page "/facturas"
+
+<PageTitle>Consulta de facturas · PetCare</PageTitle>
+
+<EncabezadoPagina Ruta="Caja" Titulo="Consulta de facturas" Subtitulo="Búsqueda por número de factura o por nombre del cliente" />
+
+<Seccion Numero="I." Titulo="Criterios de búsqueda">
+    <div class="busqueda">
+        <div class="campo">
+            <label for="buscar-numero">Número de factura</label>
+            <input id="buscar-numero" type="search" placeholder="FAC-1001"
+                   @bind="numero" @bind:event="oninput" @onkeydown="AlPresionarTeclaAsync" />
+        </div>
+        <div class="campo">
+            <label for="buscar-cliente">Nombre del cliente</label>
+            <input id="buscar-cliente" type="search" placeholder="Parte del nombre"
+                   @bind="cliente" @bind:event="oninput" @onkeydown="AlPresionarTeclaAsync" />
+        </div>
+        <button type="button" class="btn primario" disabled="@buscando" @onclick="BuscarAsync">
+            <Icono Nombre="buscar" /> Buscar (Enter)
+        </button>
+    </div>
+    <p class="pista">No distingue mayúsculas ni tildes. Basta con una parte del nombre. Sin criterios se listan todas.</p>
+</Seccion>
+
+<Seccion Numero="II." Titulo="Resultados" Detalle="@DetalleResultados()">
+    @if (mensajeError != null)
+    {
+        <Nota Tipo="error" Titulo="No se pudo buscar" Mensaje="@mensajeError" AlCerrar="CerrarError" />
+    }
+    else if (facturas.Count == 0)
+    {
+        <Nota Tipo="info" Titulo="Sin resultados" Mensaje="No encontramos facturas con ese número o cliente." />
+    }
+    else
+    {
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Emitida por</th>
+                    <th class="der">Total</th>
+                    <th>Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Factura factura in facturas)
+                {
+                    <tr class="@(factura.Anulada ? "anulada" : "")">
+                        <td><b>@factura.Numero</b></td>
+                        <td>@Formato.Fecha(factura.FechaEmision)</td>
+                        <td>@factura.NombreCliente</td>
+                        <td>@factura.UsuarioEmisor.NombreCompleto</td>
+                        <td class="der">@Formato.Moneda(factura.Total)</td>
+                        <td>
+                            @if (factura.Anulada)
+                            {
+                                <InsigniaEstado Texto="Anulada" Tono="error" />
+                            }
+                            else
+                            {
+                                <InsigniaEstado Texto="Vigente" Tono="ok" />
+                            }
+                        </td>
+                        <td class="der"><a class="enlace" href="facturas/@factura.Id">Ver detalle</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</Seccion>
