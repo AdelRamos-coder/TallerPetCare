@@ -13,6 +13,7 @@ namespace PetCareWeb.Datos.Configuraciones
         {
             builder.Property(h => h.TarifaDiaria).HasPrecision(18, 2);
             builder.Property(h => h.FechaAlta).HasColumnType("datetime2");
+            builder.Ignore(h => h.EstaHospitalizado);
 
             builder.HasOne(h => h.Jaula)
                 .WithMany()

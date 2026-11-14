@@ -16,6 +16,9 @@ namespace PetCare
         /// <summary>Fecha de alta. Mientras no tenga, la mascota sigue hospitalizada.</summary>
         public DateTime? FechaAlta { get; private set; }
 
+        /// <summary>Indica si la mascota sigue en la jaula (todavía no tiene alta).</summary>
+        public bool EstaHospitalizado => FechaAlta == null;
+
         /// <summary>
         /// Registra el ingreso de una mascota a una jaula libre.
         /// </summary>

@@ -98,7 +98,7 @@
             <div class="acciones-formulario">
                 <button type="button" class="btn primario" disabled="@guardando" @onclick="PedirConfirmacionAlta">Registrar alta</button>
                 <span class="pista">
-                    @if (seleccionada.FechaAlta == null)
+                    @if (seleccionada.EstaHospitalizado)
                     {
                         @($"La jaula {seleccionada.Jaula.Codigo} queda libre.")
                     }
@@ -145,7 +145,7 @@
                             <td>@Formato.Fecha(hospitalizacion.Fecha)</td>
                             <td class="der">@hospitalizacion.CalcularDias()</td>
                             <td>
-                                @if (hospitalizacion.FechaAlta == null)
+                                @if (hospitalizacion.EstaHospitalizado)
                                 {
                                     <InsigniaEstado Texto="Hospitalizada" Tono="info" />
                                 }

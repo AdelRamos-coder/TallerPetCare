@@ -62,7 +62,7 @@ namespace PetCareWeb.Components.Pages
                 jaulasOcupadas = jaulas.Where(j => j.Ocupada).ToList();
 
                 List<Hospitalizacion> hospitalizaciones = await ServicioHospitalizaciones.ListarAsync();
-                hospitalizacionesActivas = hospitalizaciones.Where(h => h.FechaAlta == null).ToList();
+                hospitalizacionesActivas = hospitalizaciones.Where(h => h.EstaHospitalizado).ToList();
 
                 List<LoteMedicamento> lotes = await ServicioLotes.ListarAsync();
                 lotesVencidos = lotes.Where(l => l.EstaVencido()).ToList();

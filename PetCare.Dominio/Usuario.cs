@@ -28,7 +28,7 @@ namespace PetCare
         /// Crea un usuario con su contraseña ya convertida en hash.
         /// </summary>
         /// <exception cref="ArgumentException">Si falta el usuario, el nombre o el hash.</exception>
-        public Usuario(string nombreUsuario, string nombreCompleto, string contrasenaHash, RolUsuario rol)
+        public Usuario(string nombreUsuario, string nombreCompleto, RolUsuario rol, string contrasenaHash)
         {
             if (string.IsNullOrWhiteSpace(nombreUsuario))
             {
