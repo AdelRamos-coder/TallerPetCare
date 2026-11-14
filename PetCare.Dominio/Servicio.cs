@@ -7,6 +7,12 @@ namespace PetCare
     /// </summary>
     public abstract class Servicio : IFacturable
     {
+        /// <summary>Largo máximo del código (columna Codigo, NVARCHAR(20)).</summary>
+        public const int LargoCodigo = 20;
+
+        /// <summary>Largo máximo del nombre de la mascota (columna NombreMascota, NVARCHAR(80)).</summary>
+        public const int LargoNombreMascota = 80;
+
         /// <summary>Identificador que asigna la base de datos.</summary>
         public int Id { get; private set; }
 
@@ -22,16 +28,26 @@ namespace PetCare
         /// <summary>
         /// Constructor que usan las clases hijas. Valida lo común a todo servicio.
         /// </summary>
-        /// <exception cref="ArgumentException">Si el código o el nombre de la mascota están vacíos.</exception>
+        /// <exception cref="ArgumentException">
+        /// Si el código o el nombre de la mascota están vacíos o superan el largo de su columna.
+        /// </exception>
         protected Servicio(string codigo, string nombreMascota, DateTime fecha)
         {
             if (string.IsNullOrWhiteSpace(codigo))
             {
                 throw new ArgumentException("El código del servicio es obligatorio");
             }
+            if (codigo.Trim().Length > LargoCodigo)
+            {
+                throw new ArgumentException($"El código admite máximo {LargoCodigo} caracteres");
+            }
             if (string.IsNullOrWhiteSpace(nombreMascota))
             {
                 throw new ArgumentException("El nombre de la mascota es obligatorio");
+            }
+            if (nombreMascota.Trim().Length > LargoNombreMascota)
+            {
+                throw new ArgumentException($"El nombre de la mascota admite máximo {LargoNombreMascota} caracteres");
             }
 
             Codigo = codigo.Trim();

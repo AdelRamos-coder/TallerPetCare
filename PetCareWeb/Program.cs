@@ -2,6 +2,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using PetCareWeb.Components;
 using PetCareWeb.Datos;
 using PetCareWeb.Servicios;
@@ -17,8 +18,12 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 // Las páginas nunca crean el contexto: los servicios piden uno corto a la fábrica en cada operación.
+// Sin reintentos automáticos: si SQL Server no responde, llega la SqlException original
+// y la pantalla la convierte en un mensaje claro (HU-17).
 builder.Services.AddDbContextFactory<PetCareDbContext>(opciones =>
-    opciones.UseSqlServer(builder.Configuration.GetConnectionString("PetCare")));
+    opciones.UseSqlServer(
+        builder.Configuration.GetConnectionString("PetCare"),
+        sql => sql.ExecutionStrategy(dependencias => new NonRetryingExecutionStrategy(dependencias))));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(opciones =>

@@ -4,6 +4,11 @@
 
 <EncabezadoPagina Ruta="Atención" Titulo="Citas de consulta" Subtitulo="Registro, ajuste de duración, veterinario y estado" />
 
+@if (mensajeCarga != null)
+{
+    <Nota Tipo="error" Titulo="No pudimos cargar las citas" Mensaje="@mensajeCarga" AlCerrar="CerrarCarga" />
+}
+
 <div class="rejilla-dos">
     <Seccion Numero="I." Titulo="Registro de cita">
         <EditForm Model="modelo" OnValidSubmit="RegistrarAsync" class="formulario">
@@ -38,8 +43,8 @@
             </div>
 
             <div class="acciones-formulario">
-                <button type="submit" class="btn primario">
-                    <Icono Nombre="mas" /> Registrar cita
+                <button type="submit" class="btn primario" disabled="@guardando">
+                    <Icono Nombre="mas" /> @(guardando ? "Guardando..." : "Registrar cita")
                 </button>
                 <span class="pista">Inicia con 30 min, sin veterinario y Programada.</span>
             </div>
@@ -48,6 +53,10 @@
         @if (mensajeRegistro != null)
         {
             <Nota Tipo="ok" Titulo="Cita registrada" Mensaje="@mensajeRegistro" AlCerrar="CerrarMensajes" />
+        }
+        @if (errorRegistro != null)
+        {
+            <Nota Tipo="error" Titulo="@tituloErrorRegistro" Mensaje="@errorRegistro" AlCerrar="CerrarMensajes" />
         }
     </Seccion>
 
@@ -61,7 +70,7 @@
             <div class="ajuste">
                 <div class="campo">
                     <label for="cita-duracion">Duración (minutos)</label>
-                    <input id="cita-duracion" type="number" min="15" max="180" step="5"
+                    <input id="cita-duracion" type="number" min="15" max="180" step="5" disabled="@guardando"
                            @bind="duracionNueva" @bind:after="CambiarDuracionAsync" />
                     <span class="pista">Entre 15 y 180 minutos. Se guarda al salir del campo.</span>
                 </div>
@@ -78,11 +87,11 @@
             </div>
 
             <div class="botonera">
-                <button type="button" class="btn primario" @onclick="ConfirmarVeterinarioAsync">
+                <button type="button" class="btn primario" disabled="@guardando" @onclick="ConfirmarVeterinarioAsync">
                     <Icono Nombre="check" /> Confirmar veterinario
                 </button>
-                <button type="button" class="btn" @onclick="MarcarAtendidaAsync">Marcar atendida</button>
-                <button type="button" class="btn peligro-borde" @onclick="MarcarCanceladaAsync">
+                <button type="button" class="btn" disabled="@guardando" @onclick="MarcarAtendidaAsync">Marcar atendida</button>
+                <button type="button" class="btn peligro-borde" disabled="@guardando" @onclick="MarcarCanceladaAsync">
                     <Icono Nombre="prohibido" /> Cancelar
                 </button>
             </div>
@@ -94,6 +103,10 @@
             @if (avisoAjuste != null)
             {
                 <Nota Tipo="alerta" Titulo="No se hizo ningún cambio" Mensaje="@avisoAjuste" AlCerrar="CerrarMensajes" />
+            }
+            @if (errorAjuste != null)
+            {
+                <Nota Tipo="error" Titulo="@tituloErrorAjuste" Mensaje="@errorAjuste" AlCerrar="CerrarMensajes" />
             }
 
             <p class="pista">Veterinario: se asigna una sola vez. Valor: $60.000 hasta 30 min y $1.500 por cada minuto adicional.</p>

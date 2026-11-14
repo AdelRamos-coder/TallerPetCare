@@ -12,6 +12,15 @@ namespace PetCare
         private const decimal TarifaBase = 60000m;
         private const decimal TarifaMinutoAdicional = 1500m;
 
+        /// <summary>Largo máximo de la cédula (columna CedulaCliente, NVARCHAR(20)).</summary>
+        public const int LargoCedula = 20;
+
+        /// <summary>Largo máximo del motivo (columna Motivo, NVARCHAR(150)).</summary>
+        public const int LargoMotivo = 150;
+
+        /// <summary>Largo máximo del veterinario (columna VeterinarioAsignado, NVARCHAR(100)).</summary>
+        public const int LargoVeterinario = 100;
+
         private int _duracionMinutos;
 
         /// <summary>Cédula del dueño de la mascota.</summary>
@@ -24,7 +33,7 @@ namespace PetCare
         /// Duración de la consulta en minutos. Solo acepta valores entre 15 y 180;
         /// si el valor no sirve, la cita conserva la duración que tenía.
         /// </summary>
-        /// <exception cref="ArgumentException">Si la duración está fuera de 15 a 180 minutos.</exception>
+        /// <exception cref="ReglaNegocioException">Si la duración está fuera de 15 a 180 minutos.</exception>
         public int DuracionMinutos
         {
             get => _duracionMinutos;
@@ -32,7 +41,8 @@ namespace PetCare
             {
                 if (value < DuracionMinima || value > DuracionMaxima)
                 {
-                    throw new ArgumentException($"La duración debe estar entre {DuracionMinima} y {DuracionMaxima} minutos");
+                    throw new ReglaNegocioException(
+                        $"La duración debe estar entre {DuracionMinima} y {DuracionMaxima} minutos");
                 }
 
                 _duracionMinutos = value;
@@ -49,7 +59,11 @@ namespace PetCare
         /// Registra una cita nueva.
         /// </summary>
         /// <exception cref="ArgumentException">
-        /// Si falta el código, la mascota, la cédula o el motivo, o si la duración está fuera de 15 a 180 minutos.
+        /// Si falta el código, la mascota, la cédula o el motivo, si alguno supera el largo de su columna
+        /// o si la cédula tiene algo distinto de números.
+        /// </exception>
+        /// <exception cref="ReglaNegocioException">
+        /// Si la fecha no está entre hoy y un año hacia adelante, o si la duración está fuera de 15 a 180 minutos.
         /// </exception>
         public CitaVeterinaria(string codigo, string nombreMascota, string cedulaCliente, DateTime fecha,
                                string motivo, int duracionMinutos = MinutosBase)
@@ -59,12 +73,29 @@ namespace PetCare
             {
                 throw new ArgumentException("La cédula del cliente es obligatoria");
             }
+
+            string cedula = cedulaCliente.Trim();
+
+            if (cedula.Length > LargoCedula)
+            {
+                throw new ArgumentException($"La cédula admite máximo {LargoCedula} caracteres");
+            }
+            if (!cedula.All(char.IsAsciiDigit))
+            {
+                throw new ArgumentException("La cédula solo puede tener números, sin puntos, espacios ni letras");
+            }
             if (string.IsNullOrWhiteSpace(motivo))
             {
                 throw new ArgumentException("El motivo de la cita es obligatorio");
             }
+            if (motivo.Trim().Length > LargoMotivo)
+            {
+                throw new ArgumentException($"El motivo admite máximo {LargoMotivo} caracteres");
+            }
 
-            CedulaCliente = cedulaCliente.Trim();
+            ValidarFechaProgramada(fecha);
+
+            CedulaCliente = cedula;
             Motivo = motivo.Trim();
             DuracionMinutos = duracionMinutos;
         }
@@ -83,12 +114,16 @@ namespace PetCare
         /// y solo mientras la cita está programada.
         /// </summary>
         /// <returns>true si quedó asignado; false si la cita ya tenía veterinario o ya no está programada.</returns>
-        /// <exception cref="ArgumentException">Si el nombre del veterinario está vacío.</exception>
+        /// <exception cref="ArgumentException">Si el nombre del veterinario está vacío o es demasiado largo.</exception>
         public bool ConfirmarVeterinario(string veterinario)
         {
             if (string.IsNullOrWhiteSpace(veterinario))
             {
-                throw new ArgumentException("El veterinario es obligatorio");
+                throw new ArgumentException("El nombre del veterinario no puede estar vacío");
+            }
+            if (veterinario.Trim().Length > LargoVeterinario)
+            {
+                throw new ArgumentException($"El nombre del veterinario admite máximo {LargoVeterinario} caracteres");
             }
             if (Veterinario != null || Estado != EstadoCita.Programada)
             {
@@ -167,14 +202,30 @@ namespace PetCare
         /// Además de la regla de todo servicio, una cita cancelada no se cobra.
         /// </summary>
         /// <exception cref="ArgumentException">Si la cantidad es distinta de 1.</exception>
-        /// <exception cref="InvalidOperationException">Si la cita está cancelada.</exception>
+        /// <exception cref="ReglaNegocioException">Si la cita está cancelada.</exception>
         public override void ValidarFacturacion(int cantidad)
         {
             base.ValidarFacturacion(cantidad);
 
             if (Estado == EstadoCita.Cancelada)
             {
-                throw new InvalidOperationException($"La cita {Codigo} está cancelada y no se puede facturar");
+                throw new ReglaNegocioException($"La cita {Codigo} está cancelada y no se puede facturar");
+            }
+        }
+
+        /// <summary>
+        /// Una cita se programa desde hoy y hasta un año hacia adelante.
+        /// </summary>
+        /// <exception cref="ReglaNegocioException">Si la fecha queda por fuera de ese rango.</exception>
+        private static void ValidarFechaProgramada(DateTime fecha)
+        {
+            DateTime hoy = DateTime.Today;
+            DateTime limite = hoy.AddYears(1);
+
+            if (fecha.Date < hoy || fecha.Date > limite)
+            {
+                throw new ReglaNegocioException(
+                    $"La fecha de la cita debe estar entre hoy y el {limite:dd/MM/yyyy}");
             }
         }
     }
