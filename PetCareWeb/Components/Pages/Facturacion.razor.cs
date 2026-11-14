@@ -238,6 +238,10 @@ namespace PetCareWeb.Components.Pages
                 await operacion();
                 mensajeOk = mensajeSiFunciona;
             }
+            catch (ReglaNegocioException ex)
+            {
+                MostrarError(tituloSiFalla, Formato.Oracion(ex.Message) + " La factura queda igual que antes.");
+            }
             catch (ArgumentException ex)
             {
                 MostrarError(tituloSiFalla, ex.Message);

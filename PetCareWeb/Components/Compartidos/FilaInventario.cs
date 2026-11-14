@@ -19,6 +19,10 @@ namespace PetCareWeb.Components.Compartidos
                 item.ValidarFacturacion(1);
                 return new FilaInventario(item, null);
             }
+            catch (ReglaNegocioException ex)
+            {
+                return new FilaInventario(item, ex.Message);
+            }
             catch (ArgumentException ex)
             {
                 return new FilaInventario(item, ex.Message);

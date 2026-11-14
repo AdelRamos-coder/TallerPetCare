@@ -149,8 +149,8 @@ namespace PetCareWeb.Components.Pages
             }
             catch (InvalidOperationException ex)
             {
-                // Las reglas del dominio llegan como ReglaNegocioException (atrapada arriba);
-                // otra InvalidOperationException viene de la infraestructura y su texto no es para el usuario.
+                // Las reglas de la cita llegan como ReglaNegocioException (atrapada arriba);
+                // una InvalidOperationException aquí viene de la infraestructura y su texto no es para el usuario.
                 Logger.LogError(ex, "Operación inválida al registrar la cita {Codigo}", modelo.Codigo);
                 MostrarErrorRegistro("No se pudo registrar la cita", MensajeSinConexion);
             }
