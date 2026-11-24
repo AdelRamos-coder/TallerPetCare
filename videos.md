@@ -7,7 +7,7 @@
 | Ader Quitana | Pendiente |
 | Luis Toledo | Pendiente |
 | Wilson Caraballo | Pendiente |
-| Adel Ramos | Pendiente |
+| Adel Ramos | https://drive.google.com/file/d/1wlYYKJ0vl0sP1D858vr6sSxfFci8WRUQ/view?usp=sharing |
 
 ## Unidad 2 · PetCare 2.0 (consola)
 
