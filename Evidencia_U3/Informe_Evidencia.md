@@ -162,12 +162,12 @@ Mínimo tres entradas: creación, depuración y documentación. Lo que está aqu
 
 | Campo | Contenido |
 |---|---|
-| Herramienta y fecha | Claude · 14/11/2026 |
-| Qué necesitábamos resolver | Blindar el formulario de citas: excepción propia, orden de los catch, mensajes distintos para duplicado y base caída, y que el formulario quede usable después de un error |
-| Instrucción (prompt) tal como se escribió | [Pendiente: copiar del chat de Claude del 14/11 el texto exacto con el que se pidió el manejo de excepciones] |
-| Qué respondió la IA (resumen) | Propuso ReglaNegocioException y CodigoDuplicadoException, validar en CitaVeterinaria, revisar el código antes de guardar, traducir el rechazo de UQ_Servicios_Codigo y bloquear el doble clic con una bandera que se apaga en finally |
-| Qué aceptamos, qué cambiamos y qué rechazamos, y por qué | Aceptamos las dos excepciones, la revisión del código antes de guardar y la bandera con finally. En la primera versión ReglaNegocioException heredaba de InvalidOperationException. La cambiamos para que herede directamente de Exception: la evidencia lo pide (R2) y así una regla del negocio no se confunde con un error del sistema al atraparla. También ajustamos los catch de Facturación e Inventario |
-| Cómo comprobamos que funcionaba | Con los ocho ataques del Anexo A en las ramas antes-robustez y despues-robustez. En el estado después ningún ataque tumbó la pantalla, A3 y A4 dan mensajes distintos y el registro muestra "Sin conexión al registrar la cita CIT-A04" |
+| Herramienta y fecha | Claude Code (Claude Opus 5.5) · 14/11/2026 |
+| Qué necesitábamos resolver | Construir la página pública de la clínica (el diseño 11 que elegimos) dentro de la misma aplicación, sin tocar los formularios del personal |
+| Instrucción (prompt) tal como se escribió | "you can start, and act as a architecture engineer senior, with the architecture without forcing nothing, and with good animations, smooothly" |
+| Qué respondió la IA (resumen) | Escribió un plan y lo implementó: la página en /, el panel del personal movido a /panel, los datos de contacto en appsettings.json (sección Clinica), los precios tomados del dominio, las imágenes optimizadas y animaciones solo con CSS |
+| Qué aceptamos, qué cambiamos y qué rechazamos, y por qué | El plan decía leer las tarifas de las jaulas desde la base de datos. Lo cambiamos para leerlas del dominio (Jaula.TarifaDiaPara), porque ya estaban ahí y así la página pública no depende de la base. Al revisarla en el navegador aparecieron dos errores de la IA: la regla de color de los enlaces dejaba los botones sin texto visible y la barra rápida tapaba el botón de agendar. Los dos se corrigieron |
+| Cómo comprobamos que funcionaba | Se revisó en el navegador a ancho de escritorio y de celular, se probó el paso al inicio de sesión del personal y se abrió la página con la base de datos apagada para confirmar que no depende de ella |
 | Integrante responsable | Adel Ramos |
 
 ### Entrada 2 · Depuración
@@ -192,6 +192,18 @@ Mínimo tres entradas: creación, depuración y documentación. Lo que está aqu
 | Qué respondió la IA (resumen) | Compiló con la advertencia CS1591 activada, encontró 78 miembros públicos sin ///, los documentó en 40 archivos sin cambiar el código y revisó que 47 de los 48 lanzamientos de excepciones tuvieran su etiqueta exception |
 | Qué aceptamos, qué cambiamos y qué rechazamos, y por qué | Aceptamos los comentarios. La etiqueta que falta (InvalidOperationException en DarDeAltaAsync, del formulario de hospitalizaciones) no se agregó porque decidimos no tocar más código antes de la sustentación; no es del formulario de esta evidencia |
 | Cómo comprobamos que funcionaba | Volvimos a compilar con CS1591 activada: 0 errores y 0 advertencias de comentarios faltantes |
+| Integrante responsable | Adel Ramos |
+
+### Entrada 4 · Creación (manejo de excepciones de esta evidencia)
+
+| Campo | Contenido |
+|---|---|
+| Herramienta y fecha | Claude · 14/11/2026 |
+| Qué necesitábamos resolver | Blindar el formulario de citas: excepción propia, orden de los catch, mensajes distintos para duplicado y base caída, y que el formulario quede usable después de un error |
+| Instrucción (prompt) tal como se escribió | No guardamos el texto exacto de esta petición: fue en un chat de Claude del 14/11 y no lo copiamos en su momento. Por eso las tres entradas anteriores son las que tienen la instrucción literal |
+| Qué respondió la IA (resumen) | Propuso ReglaNegocioException y CodigoDuplicadoException, validar en CitaVeterinaria, revisar el código antes de guardar, traducir el rechazo de UQ_Servicios_Codigo y bloquear el doble clic con una bandera que se apaga en finally |
+| Qué aceptamos, qué cambiamos y qué rechazamos, y por qué | Aceptamos las dos excepciones, la revisión del código antes de guardar y la bandera con finally. En la primera versión ReglaNegocioException heredaba de InvalidOperationException. La cambiamos para que herede directamente de Exception: la evidencia lo pide (R2) y así una regla del negocio no se confunde con un error del sistema al atraparla. También ajustamos los catch de Facturación e Inventario |
+| Cómo comprobamos que funcionaba | Con los ocho ataques del Anexo A en las ramas antes-robustez y despues-robustez. En el estado después ningún ataque tumbó la pantalla, A3 y A4 dan mensajes distintos y el registro muestra "Sin conexión al registrar la cita CIT-A04" |
 | Integrante responsable | Adel Ramos |
 
 ---
