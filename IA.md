@@ -1,6 +1,6 @@
 # Bitácora de uso de IA 
 
-Programación Orientada a Objetos · Unidad 2 (PetCare 2.0) y Unidad 3 (PetCare Web)
+Programación Orientada a Objetos, Unidad 2 (PetCare 2.0) y Unidad 3 (PetCare Web)
 
 Integrantes: Ader, Adel, Wilson y Luis
 
@@ -41,7 +41,7 @@ Cada vez que alguien usó una IA, agrega una fila con estas columnas:
 | 14/10/2026 | Adel | Claude | Si la relación entre Hospitalizacion y Jaula era composición o agregación | Agregación: la hospitalización recibe la jaula ya creada, la ocupa al ingresar y la libera al dar de alta | No usamos composición porque la jaula existe antes de que llegue el animal y sigue ahí cuando se va. Si la hospitalización la creara, cada animal tendría una jaula nueva, y la clínica tiene jaulas fijas |
 | 14/10/2026 | Adel | Claude | Cómo quitar el nombre de la mascota, que estaba repetido en Jaula y en Servicio | Que la jaula guarde a su ocupante (la hospitalización) y le pregunte el nombre, los días y la cuenta | Nosotros propusimos que Jaula heredara de Servicio, pero lo descartamos: una jaula no es un servicio, y si heredara se podría meter en la factura como si se cobrara la jaula |
 
-### Unidad 3 · PetCare Web
+### Unidad 3: PetCare Web
 
 | Fecha | Quién | Herramienta | Qué le pedimos | Qué usamos | Qué corregimos o no usamos y por qué |
 |---|---|---|---|---|---|

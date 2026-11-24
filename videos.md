@@ -1,6 +1,6 @@
 # Vídeos
 
-## Unidad 3 · PetCare Web
+## Unidad 3: PetCare Web
 
 | Integrante | Enlace |
 |---|---|
@@ -9,7 +9,7 @@
 | Wilson Caraballo | Pendiente |
 | Adel Ramos | https://drive.google.com/file/d/1wlYYKJ0vl0sP1D858vr6sSxfFci8WRUQ/view?usp=sharing |
 
-## Unidad 2 · PetCare 2.0 (consola)
+## Unidad 2: PetCare 2.0 (consola)
 
 | Integrante | Enlace |
 |---|---|

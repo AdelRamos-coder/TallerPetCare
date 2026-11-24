@@ -2,26 +2,30 @@
 
 Evidencia de desempeño de la Unidad 3 (10 %). Máximo 10 páginas sin contar las capturas de los anexos.
 
-Las secciones marcadas **[Lo escribe el equipo]** son las que la evidencia exige escribir sin ayuda de IA. Ya está la síntesis (P1 a P8); faltan las reflexiones del Anexo C.
+Falta: las reflexiones del Anexo C, que cada integrante escribe sin ayuda de IA, y las firmas. El PDF de este archivo se genera sin los documentos de identidad.
 
 ---
 
 ## Portada
 
-- Institución Universitaria Pascual Bravo · Facultad de Ingeniería · Departamento de Sistemas Digitales
-- Programación Orientada a Objetos (SD1007) · Grupo 053 · 2026-II
+- Institución Universitaria Pascual Bravo
+- Facultad de Ingeniería
+- Departamento de Sistemas Digitales
+- Evidencia de desempeño de la Unidad 3
+- Ader Quitana
+- Luis Toledo
+- Wilson Caraballo
+- Adel Ramos
 - Docente: Jorge Albeiro Muriel Vélez
-- Título: PetCare Web a prueba de fallos
-- Integrantes: Ader Quitana · Luis Toledo · Wilson Caraballo · Adel Ramos
-- Documentos: [documento de cada integrante]
+- Programación Orientada a Objetos (SD1007), grupo 053, 2026-II
 - Repositorio: https://github.com/AdelRamos-coder/TallerPetCare (ramas `antes-robustez` y `despues-robustez`)
-- Fecha: 23 de noviembre de 2026
+- Medellín, noviembre de 2026
 
 ---
 
 ## 1. Formulario elegido
 
-F1 · Citas de consulta (`/citas`).
+F1, Citas de consulta (`/citas`).
 
 Escogimos Citas porque es el formulario que más cosas hace sobre una misma tabla: ahí se registra la cita, se cambia la duración, se confirma el veterinario y se cambia el estado, y todo eso queda en la tabla Servicios. Además, el primer problema que nos contó la Dra. Ospina pasó justamente ahí, cuando Yuliana puso 500 minutos de duración. Y nos servía para probar los tres tipos de dato que más se prestan para romper algo: un texto con largo máximo (el motivo), un número con rango (la duración) y una fecha.
 
@@ -113,7 +117,7 @@ Fuente: Microsoft Learn, "Etiquetas XML recomendadas para comentarios de documen
 
 ---
 
-## 3. Anexo A · Registro de pruebas antes y después
+## 3. Anexo A. Registro de pruebas antes y después
 
 Los ocho ataques se ejecutaron el 23/11/2026 con los datos exactos de `Guia_de_Ataques.md`, iniciando sesión como `dgomez` (recepcionista). Cada estado se probó sobre una base nueva y vacía, para que lo que guardó un estado no cambiara el resultado del otro. "Mañana" es el 24/11/2026. Antes de los ataques se registró CIT-A01 (Firulais, 1036458721, mañana 10:00, "Control general").
 
@@ -141,21 +145,21 @@ Resumen: en el estado antes, cinco ataques tumbaron la pantalla (A2, A3, A4, el 
 
 ---
 
-## 4. Fase 4 · Lo que decidimos no atrapar o no logramos resolver (máximo 120 palabras)
+## 4. Fase 4: lo que decidimos no atrapar
 
 No atrapamos la excepción de `Database.Migrate()` en `Program.cs`. Si SQL Server no está disponible cuando la aplicación arranca, Migrate lanza una SqlException y la aplicación no inicia. Atraparla no arreglaría nada: sin base de datos ningún formulario puede leer ni guardar, y la aplicación abriría pantallas que solo mostrarían avisos de error. Es mejor que falle al arrancar, con el detalle en la consola, donde lo ve quien la ejecuta. En cambio, si la base se cae con la aplicación abierta (A4), sí se atrapa en el formulario, porque ahí el usuario puede esperar e intentar de nuevo sin perder lo que escribió.
 
 ---
 
-## 5. Anexo B · Bitácora de uso de IA
+## 5. Anexo B. Bitácora de uso de IA
 
 Mínimo tres entradas: creación, depuración y documentación. Lo que está aquí coincide con `IA.md`.
 
-### Entrada 1 · Creación
+### Entrada 1. Creación
 
 | Campo | Contenido |
 |---|---|
-| Herramienta y fecha | Claude Code (Claude Opus 5.5) · 14/11/2026 |
+| Herramienta y fecha | Claude Code (Claude Opus 5.5), 14/11/2026 |
 | Qué necesitábamos resolver | Construir la página pública de la clínica (el diseño 11 que elegimos) dentro de la misma aplicación, sin tocar los formularios del personal |
 | Instrucción (prompt) tal como se escribió | "you can start, and act as a architecture engineer senior, with the architecture without forcing nothing, and with good animations, smooothly" |
 | Qué respondió la IA (resumen) | Escribió un plan y lo implementó: la página en /, el panel del personal movido a /panel, los datos de contacto en appsettings.json (sección Clinica), los precios tomados del dominio, las imágenes optimizadas y animaciones solo con CSS |
@@ -163,11 +167,11 @@ Mínimo tres entradas: creación, depuración y documentación. Lo que está aqu
 | Cómo comprobamos que funcionaba | Se revisó en el navegador a ancho de escritorio y de celular, se probó el paso al inicio de sesión del personal y se abrió la página con la base de datos apagada para confirmar que no depende de ella |
 | Integrante responsable | Adel Ramos |
 
-### Entrada 2 · Depuración
+### Entrada 2. Depuración
 
 | Campo | Contenido |
 |---|---|
-| Herramienta y fecha | Claude Code (Claude Opus 5.5) · 14/11/2026 |
+| Herramienta y fecha | Claude Code (Claude Opus 5.5), 14/11/2026 |
 | Qué necesitábamos resolver | Cargar datos de ejemplo en la base para probar todas las pantallas |
 | Instrucción (prompt) tal como se escribió | "lets put some dataset examples to test it with information" |
 | Qué respondió la IA (resumen) | Leyó el esquema, los CHECK y las reglas de precio del dominio y escribió DatosDePrueba.sql con 9 citas, 6 hospitalizaciones, 8 lotes y 5 facturas |
@@ -175,11 +179,11 @@ Mínimo tres entradas: creación, depuración y documentación. Lo que está aqu
 | Cómo comprobamos que funcionaba | El script terminó de cargar sin errores en la base PetCareWeb con sqlcmd. Quedó en la raíz del repositorio y el README explica cómo cargarlo |
 | Integrante responsable | Adel Ramos |
 
-### Entrada 3 · Documentación
+### Entrada 3. Documentación
 
 | Campo | Contenido |
 |---|---|
-| Herramienta y fecha | Claude Code (Claude Opus 5.5) · 23/11/2026 |
+| Herramienta y fecha | Claude Code (Claude Opus 5.5), 23/11/2026 |
 | Qué necesitábamos resolver | Que las clases y los miembros públicos tuvieran comentarios XML (///), como pide el producto, y revisar que los métodos que lanzan excepciones tuvieran su etiqueta exception (R8) |
 | Instrucción (prompt) tal como se escribió | "puedes clonar el repositorio, y actualizar todo, que todo quede completo?" |
 | Qué respondió la IA (resumen) | Compiló con la advertencia CS1591 activada, encontró 78 miembros públicos sin ///, los documentó en 40 archivos sin cambiar el código y revisó que 47 de los 48 lanzamientos de excepciones tuvieran su etiqueta exception |
@@ -187,11 +191,11 @@ Mínimo tres entradas: creación, depuración y documentación. Lo que está aqu
 | Cómo comprobamos que funcionaba | Volvimos a compilar con CS1591 activada: 0 errores y 0 advertencias de comentarios faltantes |
 | Integrante responsable | Adel Ramos |
 
-### Entrada 4 · Creación (manejo de excepciones de esta evidencia)
+### Entrada 4. Creación (manejo de excepciones de esta evidencia)
 
 | Campo | Contenido |
 |---|---|
-| Herramienta y fecha | Claude · 14/11/2026 |
+| Herramienta y fecha | Claude, 14/11/2026 |
 | Qué necesitábamos resolver | Blindar el formulario de citas: excepción propia, orden de los catch, mensajes distintos para duplicado y base caída, y que el formulario quede usable después de un error |
 | Instrucción (prompt) tal como se escribió | No guardamos el texto exacto de esta petición: fue en un chat de Claude del 14/11 y no lo copiamos en su momento. Por eso las tres entradas anteriores son las que tienen la instrucción literal |
 | Qué respondió la IA (resumen) | Propuso ReglaNegocioException y CodigoDuplicadoException, validar en CitaVeterinaria, revisar el código antes de guardar, traducir el rechazo de UQ_Servicios_Codigo y bloquear el doble clic con una bandera que se apaga en finally |
@@ -201,7 +205,7 @@ Mínimo tres entradas: creación, depuración y documentación. Lo que está aqu
 
 ---
 
-## 6. Anexo C · Reflexión ética individual · [Lo escribe cada integrante]
+## 6. Anexo C. Reflexión ética individual
 
 Entre 150 y 200 palabras por integrante, escritas sin ayuda de IA, en un solo texto que responda:
 
@@ -213,29 +217,37 @@ Entre 150 y 200 palabras por integrante, escritas sin ayuda de IA, en un solo te
 
 [Texto]
 
-Documento: ______ · Firma: ______
+Documento: ______
+
+Firma: ______
 
 ### Luis Toledo
 
 [Texto]
 
-Documento: ______ · Firma: ______
+Documento: ______
+
+Firma: ______
 
 ### Wilson Caraballo
 
 [Texto]
 
-Documento: ______ · Firma: ______
+Documento: ______
+
+Firma: ______
 
 ### Adel Ramos
 
 [Texto]
 
-Documento: ______ · Firma: ______
+Documento: ______
+
+Firma: ______
 
 ---
 
-## Anexo A · Capturas
+## Anexo A. Capturas
 
 Cada captura lleva el número del ataque y el estado. Las demás capturas de cada paso están en `Evidencia_U3/capturas`.
 

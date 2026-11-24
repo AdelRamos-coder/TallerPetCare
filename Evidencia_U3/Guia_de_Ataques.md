@@ -1,4 +1,4 @@
-# Guía para ejecutar los ataques · Formulario F1 Citas de consulta
+# Guía para ejecutar los ataques: formulario F1 Citas de consulta
 
 Esta guía dice cómo poner la aplicación en cada estado y qué datos exactos usar en cada ataque, para que el antes y el después se hagan con las mismas entradas. Los resultados (qué vio el usuario, qué excepción salió, qué quedó en la base) los anota el equipo en el Anexo A del informe con su captura.
 
@@ -63,12 +63,12 @@ WHERE Tipo = N'Cita'
 ORDER BY Id;
 ```
 
-### A1 · Campos vacíos
+### A1. Campos vacíos
 
 1. Clic en **Registrar cita** con todos los campos vacíos.
 2. Escribir tres espacios en Código, Mascota, Cédula y Motivo, dejar la fecha vacía y clic en **Registrar cita**.
 
-### A2 · Valor fuera de la regla de negocio
+### A2. Valor fuera de la regla de negocio
 
 1. Clic en la fila de `CIT-A01` en la lista.
 2. En **Duración (minutos)** escribir `500` y presionar Tab.
@@ -76,7 +76,7 @@ ORDER BY Id;
 
 Revisar que la duración de `CIT-A01` en la base siga en 30.
 
-### A3 · Código duplicado
+### A3. Código duplicado
 
 Registrar una cita nueva con el código que ya existe:
 
@@ -90,7 +90,7 @@ Registrar una cita nueva con el código que ya existe:
 
 Después del mensaje, revisar si los datos digitados siguen en el formulario y cambiar solo el código a `CIT-A03` para registrarla.
 
-### A4 · Base de datos caída
+### A4. Base de datos caída
 
 1. Con la aplicación abierta en **Citas**, detener SQL Server: `services.msc` > **SQL Server (MSSQLSERVER)** (o **SQL Server (SQLEXPRESS)**) > **Detener**.
 
@@ -120,7 +120,7 @@ Después del mensaje, revisar si los datos digitados siguen en el formulario y c
 
 Comparar el mensaje con el de A3: deben ser distintos.
 
-### A5 · Operación inválida para el estado actual
+### A5. Operación inválida para el estado actual
 
 1. Seleccionar `CIT-A01`, escribir `Dra. Lina Restrepo` en **Veterinario** y clic en **Confirmar veterinario**.
 2. Escribir `Dr. Andrés Zapata` y clic otra vez en **Confirmar veterinario**.
@@ -128,7 +128,7 @@ Comparar el mensaje con el de A3: deben ser distintos.
 
 Revisar en la base que el veterinario siga siendo `Dra. Lina Restrepo` y el estado `Cancelada`.
 
-### A6 · Dato imposible o desbordado
+### A6. Dato imposible o desbordado
 
 1. Registrar con un motivo de 300 caracteres (la columna admite 150):
 
@@ -147,7 +147,7 @@ Control general de la mascota con revision de piel, oidos, dientes y peso; Contr
 2. Registrar con fecha absurda: los mismos datos, motivo `Vacunación anual`, código `CIT-A06B` y fecha `31/12/9999 10:00`.
 3. Repetir el paso 2 con código `CIT-A06C` y fecha `01/01/0001 10:00`.
 
-### A7 · Diseñado por el equipo: cédula con letras y puntos
+### A7. Diseñado por el equipo: cédula con letras y puntos
 
 Categoría: formato de un dato que la base de datos sí acepta (la columna es texto), así que el error no lo detiene nadie si el dominio no lo revisa.
 
@@ -161,7 +161,7 @@ Categoría: formato de un dato que la base de datos sí acepta (la columna es te
 
 Revisar en la base si quedó guardada una cita con esa cédula.
 
-### A8 · Diseñado por el equipo: doble clic en Registrar cita
+### A8. Diseñado por el equipo: doble clic en Registrar cita
 
 Categoría: interacción del usuario y concurrencia (dos envíos de la misma operación).
 

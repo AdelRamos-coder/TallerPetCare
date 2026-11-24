@@ -2,7 +2,7 @@
 
 Aplicación web de la clínica veterinaria PetCare: citas de consulta, hospitalizaciones, lotes de medicamento, facturación y consulta de facturas, con usuarios que inician sesión y datos guardados en SQL Server.
 
-Programación Orientada a Objetos (SD1007) · Grupo 053 · 2026-II · Producto de la Unidad 3.
+Programación Orientada a Objetos (SD1007), grupo 053, 2026-II. Producto de la Unidad 3.
 
 ## Integrantes
 

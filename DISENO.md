@@ -1,4 +1,4 @@
-# Decisiones de diseño · PetCare Web (Unidad 3)
+# Decisiones de diseño de PetCare Web (Unidad 3)
 
 ## 1. Qué cambiamos frente al diagrama de clases y por qué
 
