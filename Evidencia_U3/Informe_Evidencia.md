@@ -2,7 +2,7 @@
 
 Evidencia de desempeño de la Unidad 3 (10 %). Máximo 10 páginas sin contar las capturas de los anexos.
 
-Las secciones marcadas **[Lo escribe el equipo]** son las que la evidencia exige escribir sin ayuda de IA: la síntesis de investigación (P1 a P8) y las reflexiones del Anexo C.
+Las secciones marcadas **[Lo escribe el equipo]** son las que la evidencia exige escribir sin ayuda de IA. Ya está la síntesis (P1 a P8); faltan las reflexiones del Anexo C.
 
 ---
 
@@ -37,86 +37,79 @@ Archivos del formulario:
 
 ---
 
-## 2. Síntesis de investigación (máximo 3 páginas) · [Lo escribe el equipo]
-
-Cada respuesta: palabras del equipo, un ejemplo corto de PetCare y la fuente citada. Mínimo tres fuentes y al menos dos de Microsoft Learn. La IA no cuenta como fuente y no se puede usar para redactar esta sección.
-
-Fuentes de Microsoft Learn que pueden consultar (verifiquen y citen las que usen):
-
-- Excepciones y control de excepciones en C#: https://learn.microsoft.com/dotnet/csharp/fundamentals/exceptions/
-- Instrucciones try, catch, finally y throw: https://learn.microsoft.com/dotnet/csharp/language-reference/statements/exception-handling-statements
-- Procedimientos recomendados para excepciones: https://learn.microsoft.com/dotnet/standard/exceptions/best-practices-for-exceptions
-- Cómo crear excepciones definidas por el usuario: https://learn.microsoft.com/dotnet/standard/exceptions/how-to-create-user-defined-exceptions
-- Control de errores en aplicaciones Blazor: https://learn.microsoft.com/aspnet/core/blazor/fundamentals/handle-errors
-- Registro (logging) en ASP.NET Core: https://learn.microsoft.com/aspnet/core/fundamentals/logging/
-- DbUpdateException (Entity Framework Core): https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbupdateexception
-- Resistencia de conexión en EF Core: https://learn.microsoft.com/ef/core/miscellaneous/connection-resiliency
-- Etiquetas XML recomendadas: https://learn.microsoft.com/dotnet/csharp/language-reference/xmldoc/recommended-tags
-- Eventos y errores del motor de SQL Server (números 2601 y 2627): https://learn.microsoft.com/sql/relational-databases/errors-events/database-engine-events-and-errors
+## 2. Síntesis de investigación
 
 ### P1. ¿Qué es una excepción en C#? ¿En qué se diferencia de un error de compilación y de un error de lógica?
 
-[Respuesta del equipo]
+Una excepción es un problema que aparece mientras el programa ya está corriendo. Cuando pasa, .NET crea un objeto de una clase que hereda de Exception y lo lanza. Si nadie lo atrapa, la operación se corta ahí mismo. El error de compilación es distinto, porque lo encuentra el compilador antes de ejecutar y el programa ni siquiera arranca. El error de lógica es el más traicionero: el programa compila y corre sin ninguna excepción, pero el resultado está mal y nadie se da cuenta.
 
-Ejemplo de PetCare: [ ]
-Dónde mirar en el código: el set de `DuracionMinutos` en `CitaVeterinaria.cs`. En el ataque A6 del estado antes, la fecha del año 9999 se guardó sin ninguna excepción: eso es un error de lógica.
-Fuente: [ ]
+En PetCare vimos los tres. Cuando en el estado antes pusimos una duración de 500 minutos (A2), salió una ArgumentException y la pantalla se cayó: eso es una excepción. Si alguien escribe factura.Agregar(lote) sin la cantidad, el proyecto no compila. Y en el ataque A6 antes, la fecha 31/12/9999 se guardó sin ningún error, lo que es un error de lógica: el sistema aceptó un dato que no tiene sentido.
+
+Fuente: Microsoft Learn, "Excepciones y control de excepciones". https://learn.microsoft.com/dotnet/csharp/fundamentals/exceptions/
 
 ### P2. ¿Cómo funcionan try, catch, finally y throw? ¿Qué le pasa a una excepción que nadie atrapa y cómo viaja por la pila?
 
-[Respuesta del equipo]
+Con throw se lanza la excepción. En try va el código que puede fallar, y catch atrapa la excepción según su tipo. finally se ejecuta siempre, haya fallado o no. Si ningún método atrapa la excepción, esta va subiendo por la pila de llamadas, de un método al que lo llamó, hasta llegar arriba del todo. En Blazor eso significa que se cae la conexión de la pantalla y el usuario ve el error.
 
-Ejemplo de PetCare: [ ]
-Dónde mirar: `RegistrarAsync` en `Citas.razor.cs` (después) y el mismo método en la rama `antes-robustez`, donde no hay try. En el ataque A2 del estado antes, la excepción subió hasta Blazor y la pantalla dejó de responder.
-Fuente: [ ]
+Eso lo vimos clarito en la captura de A4 antes, cuando recargamos con la base apagada. La excepción salió en ServicioCitas.ListarAsync (línea 25), pasó a Citas.CargarAsync (línea 41), luego a Citas.OnInitializedAsync (línea 29) y terminó en la página de error. El finally lo usamos en RegistrarAsync de Citas.razor.cs: ahí guardando = false se ejecuta siempre, y por eso en A8 después el formulario no quedó bloqueado. El throw está, por ejemplo, en throw new ReglaNegocioException(...) dentro de CitaVeterinaria.
 
-### P3. Jerarquía de excepciones de .NET. ¿Cuándo ArgumentException, ArgumentOutOfRangeException, InvalidOperationException o FormatException? ¿Por qué importa el orden de los catch?
+Fuente: Microsoft Learn, "Instrucciones de control de excepciones". https://learn.microsoft.com/dotnet/csharp/language-reference/statements/exception-handling-statements
 
-[Respuesta del equipo]
+### P3. Jerarquía de excepciones de .NET. ¿Cuándo usar ArgumentException, ArgumentOutOfRangeException, InvalidOperationException o FormatException? ¿Por qué importa el orden de los catch?
 
-Ejemplo de PetCare: [ ]
-Dónde mirar: el orden de los catch en `RegistrarAsync` (CodigoDuplicadoException antes que ReglaNegocioException).
-Fuente: [ ]
+Todas las excepciones heredan de Exception. ArgumentException se usa cuando a un método le llega un argumento que no sirve. ArgumentOutOfRangeException es hija de esa y se usa cuando el valor está por fuera del rango permitido. InvalidOperationException es para cuando el argumento está bien, pero el estado del objeto no deja hacer la operación. FormatException sale cuando un texto no se puede convertir, por ejemplo int.Parse("1.036.ABC").
+
+El orden de los catch importa porque se revisan de arriba hacia abajo y entra al primero que coincida. Por eso el más específico va primero. Si se pone uno general antes que uno de sus hijos, el compilador ni deja compilar (error CS0160).
+
+En RegistrarAsync de Citas.razor.cs el orden quedó así: CodigoDuplicadoException → ReglaNegocioException → ArgumentException → DbUpdateException → SqlException → InvalidOperationException → Exception. CodigoDuplicadoException va primero porque hereda de ReglaNegocioException. Si estuviera de segunda, el proyecto no compilaría (CS0160); y si no existiera ese catch, en A3 el duplicado saldría con el título general "La cita no cumple una regla de la clínica" y no con "El código ya existe". Otro ejemplo es Factura.Anular, que lanza InvalidOperationException si quien anula no es administrador.
+
+Fuente: Microsoft Learn, "Procedimientos recomendados para excepciones". https://learn.microsoft.com/dotnet/standard/exceptions/best-practices-for-exceptions
 
 ### P4. ¿Cómo y cuándo se crea una excepción propia? ¿Qué relación tiene con la herencia de la Unidad 2?
 
-[Respuesta del equipo]
+Una excepción propia es una clase que hereda de Exception y tiene constructores que reciben el mensaje y, si hace falta, la causa. Conviene crearla cuando hay un error del negocio que el usuario sí puede corregir y queremos separarlo de las fallas del sistema. Así, en el catch sabemos que no se dañó nada, sino que el dato no cumple una regla de la clínica.
 
-Ejemplo de PetCare: [ ]
-Dónde mirar: `ReglaNegocioException.cs` y `CodigoDuplicadoException.cs`.
-Fuente: [ ]
+Esto es la misma herencia que usamos en la Unidad 2 con Servicio y CitaVeterinaria: un catch de la clase padre también atrapa a las hijas, igual que una variable de tipo Servicio puede guardar una cita.
+
+Nosotros creamos ReglaNegocioException : Exception y CodigoDuplicadoException : ReglaNegocioException. Al principio ReglaNegocioException heredaba de InvalidOperationException, y la cambiamos a Exception por el requisito R2 (Anexo B, Entrada 4).
+
+Fuente: Microsoft Learn, "Cómo crear excepciones definidas por el usuario". https://learn.microsoft.com/dotnet/standard/exceptions/how-to-create-user-defined-exceptions
 
 ### P5. ¿Qué excepciones lanza EF Core con SQL Server al cargar o guardar? ¿Cómo se distingue un duplicado de un servidor que no responde?
 
-[Respuesta del equipo]
+Cuando se guarda con SaveChanges y la base rechaza los datos, EF Core lanza una DbUpdateException que trae adentro una SqlException. Cuando lo que pasa es que no hay conexión, sale una SqlException al intentar abrirla. Para diferenciarlas se mira el tipo de excepción y el número de error de SQL Server: el 2627 y el 2601 son registros duplicados, y el 4060 es que no se pudo abrir la base de datos.
 
-Ejemplo de PetCare: [ ]
-Dónde mirar: `EsCodigoRepetido` en `ServicioCitas.cs` y los catch de DbUpdateException y SqlException en `Citas.razor.cs`. En el estado antes, A3 dio SqlException número 2627 y A4 número 4060.
-Fuente: [ ]
+En A3 antes salió la SqlException 2627 por la restricción UQ_Servicios_Codigo. En A4 salió la 4060. En el estado antes llegó envuelta en una InvalidOperationException; en el estado después la atrapa catch (SqlException), con un mensaje distinto al del duplicado. En el código, el método EsCodigoRepetido de ServicioCitas.cs busca el nombre de la restricción dentro del mensaje interno para saber que es un código repetido.
+
+Fuentes: Microsoft Learn, "DbUpdateException Class", https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbupdateexception, y "Eventos y errores del motor de base de datos", https://learn.microsoft.com/sql/relational-databases/errors-events/database-engine-events-and-errors
 
 ### P6. ¿Qué es ILogger, qué niveles tiene y dónde se ven los mensajes en Visual Studio?
 
-[Respuesta del equipo]
+ILogger es el registro de la aplicación. Guarda mensajes para nosotros, los desarrolladores, no para el usuario. Tiene seis niveles, de menos a más grave: Trace, Debug, Information, Warning, Error y Critical. Los mensajes se ven en la consola que abre Visual Studio al ejecutar, o en la ventana Salida, eligiendo "ASP.NET Core Web Server".
 
-Ejemplo de PetCare: [ ]
-Dónde mirar: `Logger.LogWarning` y `Logger.LogError` en `Citas.razor.cs`. En A4 del estado después quedó `fail: PetCareWeb.Components.Pages.Citas[0] Sin conexión al registrar la cita CIT-A04`.
-Fuente: [ ]
+En Citas.razor.cs usamos LogWarning cuando la base rechaza la cita y LogError cuando no hay conexión. En A4 después, en la consola quedó esto: fail: PetCareWeb.Components.Pages.Citas[0] Sin conexión al registrar la cita CIT-A04. El usuario, en cambio, solo vio un mensaje en español diciéndole que no había conexión. Eso es justo lo que queríamos: el detalle técnico para nosotros y el mensaje claro para la recepción.
 
-### P7. ¿Qué prácticas son incorrectas (atrapar y callar, atrapar todo, excepciones para el flujo normal) y por qué?
+Fuente: Microsoft Learn, "Registro en .NET Core y ASP.NET Core". https://learn.microsoft.com/aspnet/core/fundamentals/logging/
 
-[Respuesta del equipo]
+### P7. ¿Qué prácticas son incorrectas (atrapar y callar, atrapar todo, usar excepciones para el flujo normal) y por qué?
 
-Ejemplo de PetCare: [ ]
-Dónde mirar: `ConfirmarVeterinario` devuelve false en vez de lanzar cuando la cita ya tiene veterinario (ataque A5).
-Fuente: [ ]
+Atrapar y callar: es poner un catch vacío. El error queda escondido y el sistema sigue como si nada, y así se podría terminar facturando un lote vencido sin que nadie se entere.
+
+Atrapar todo con un solo catch (Exception): todos los errores terminan con el mismo mensaje, entonces no hay cómo distinguir un código duplicado de la base de datos caída, y el usuario no sabe qué hacer.
+
+Usar excepciones para el flujo normal: lanzarlas en casos que son esperados vuelve el código más lento y más difícil de leer, porque una excepción debería ser algo que no se esperaba.
+
+En PetCare lo evitamos así: ConfirmarVeterinario devuelve false cuando la cita ya tiene veterinario, en vez de lanzar una excepción. Eso es algo que pasa normalmente, y la pantalla simplemente muestra un aviso de que el veterinario se asigna una sola vez. Y en RegistrarAsync cada tipo de error tiene su propio catch y su propio mensaje.
+
+Fuente: Microsoft Learn, "Procedimientos recomendados para excepciones". https://learn.microsoft.com/dotnet/standard/exceptions/best-practices-for-exceptions
 
 ### P8. ¿Cómo se documenta con comentarios XML un método que lanza excepciones? ¿Para qué sirven summary y exception?
 
-[Respuesta del equipo]
+Los comentarios se escriben con /// justo encima del método. En &lt;summary&gt; va qué hace el método, en &lt;param&gt; y &lt;returns&gt; lo que recibe y lo que devuelve, y en &lt;exception cref="..."&gt; qué excepción puede lanzar y en qué caso. Sirven porque Visual Studio los muestra al pasar el mouse por encima del método, entonces quien lo llama sabe de una qué errores tiene que atrapar sin abrir el código. Además, el proyecto genera con ellos un archivo de documentación.
 
-Ejemplo de PetCare: [ ]
-Dónde mirar: los comentarios `///` de `RegistrarAsync` en `ServicioCitas.cs`.
-Fuente: [ ]
+Por ejemplo, RegistrarAsync en ServicioCitas.cs (líneas 37 a 42) tiene un &lt;summary&gt; y cinco &lt;exception&gt;: ArgumentException, ReglaNegocioException, CodigoDuplicadoException, DbUpdateException y SqlException.
+
+Fuente: Microsoft Learn, "Etiquetas XML recomendadas para comentarios de documentación". https://learn.microsoft.com/dotnet/csharp/language-reference/xmldoc/recommended-tags
 
 ---
 
