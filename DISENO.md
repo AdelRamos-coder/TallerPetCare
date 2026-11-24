@@ -17,16 +17,25 @@ Mantuvimos los nombres de la Unidad 2 para que el proyecto siga siendo el mismo 
 | ProductoFarmacia.Nombre / PrecioUnidad | `NombreMedicamento` / `PrecioUnitario` | Nombre / PrecioUnidad |
 | CitaVeterinaria.VeterinarioAsignado / Confirmar | `Veterinario` / `ConfirmarVeterinario` | VeterinarioAsignado |
 | Hospitalizacion.DarAlta | `DarDeAlta` | |
+| CitaVeterinaria.CalcularMinutosParaLaCita | `CalcularDiasFaltantes` | |
+
+Lo que cambia en modificadores y firmas:
+
+- **`{init}` del diagrama, `{ get; }` en el código.** Codigo, NombreMascota, Fecha, Numero, FechaEmision, NombreCliente, UsuarioEmisor, TarifaDiaria, FechaVencimiento y NombreUsuario son de solo lectura, como en la Unidad 2. Protege más que `init`: con `init` se podría escribir `new Factura(...) { Numero = "" }` y saltarse la validación del constructor; con `{ get; }` solo el constructor les da valor. `Usuario.NombreCompleto` y `Usuario.Rol` también son de solo lectura.
+- **`RenglonFactura.Cantidad` y `PrecioUnitario` con `private set`.** Desde afuera se comportan como `init`: nadie fuera de la clase los cambia, y como los constructores son `internal`, solo `Factura.Agregar` crea renglones.
+- **`Factura.Anular` devuelve `bool`** (en el diagrama es `void`). Devuelve false si la factura ya estaba anulada, igual que `DarDeAlta` y `ConfirmarVeterinario` cuando la operación ya se había hecho. Si quien anula no es administrador, lanza una excepción.
+- **`IFacturable.Codigo`** no está en el diagrama. El inventario (F6) muestra el código de cada elemento recorriendo una lista de `IFacturable`, sin preguntar si es servicio o lote (`TablaInventario.razor`, línea 21).
+- **`CalcularDiasFaltantes`** es el método de la Unidad 2 y cuenta días, no minutos. Ninguna pantalla lo usa; se dejó para no romper lo entregado.
 
 Lo que agregamos:
 
 - `Id` con `private set` y un constructor sin parámetros privado (protected en las abstractas) en cada clase que se guarda. Solo lo usa Entity Framework Core al leer, así que no se pueden crear objetos inválidos desde afuera.
 - `ProductoFarmacia` es nueva: `LoteMedicamento` ahora hereda de ella. `NombreMedicamento` y `PrecioUnitario` subieron a la base porque en la tabla Productos las columnas Nombre y PrecioUnidad son NOT NULL para cualquier producto.
-- `CitaVeterinaria` conserva `CedulaCliente`, `Motivo` y `Estado`, y `LoteMedicamento` conserva `Tipo`, `EnNevera` y `StockActual`: vienen de la Unidad 2 y la base de datos tiene sus columnas.
+- `CitaVeterinaria` conserva `CedulaCliente`, `Motivo` y `Estado`, y `LoteMedicamento` conserva `Tipo`, `EnNevera` y `StockActual`: vienen de la Unidad 2 y la base de datos tiene sus columnas. Por eso sus constructores reciben esos datos. También se quedaron sus métodos de la Unidad 2: `MarcarAtendida`, `MarcarCancelada` y `EstaVigente` en la cita; `RecibirUnidades`, `DespacharUnidades`, `NecesitaReabastecimiento`, `CalcularValorInventario` y `EstaVencido(fecha)` en el lote.
 - `Jaula` se queda (tabla Jaulas). La tarifa diaria de la hospitalización sale de la jaula al ingresar y no cambia después; por eso el constructor recibe la jaula y no la tarifa. `Jaula.Ocupante` no se guarda: en la base, una jaula está ocupada si tiene una hospitalización sin alta, y el índice `UX_Servicios_JaulaOcupada` impide dos a la vez.
 - `ReglaNegocioException` y `CodigoDuplicadoException` para las reglas que el usuario puede corregir.
 
-Todo el mapeo está en `PetCareWeb/Datos/Configuraciones`, una clase por tabla, con los nombres de restricciones de `BaseDeDatos.sql` (PK_, UQ_, CK_, FK_, IX_).
+Todo el mapeo está en `PetCareWeb/Datos/Configuraciones`, una clase por tabla, con los nombres de restricciones de `BaseDeDatos.sql` (PK_, UQ_, CK_, FK_, IX_). Ese script está en la raíz del repositorio. La base que crea la migración tiene las mismas tablas, columnas, llaves, UNIQUE, CHECK e índices; solo cambia el nombre del valor por defecto de EstaAnulada: el script lo llama `DF_Facturas_EstaAnulada` y la migración deja que SQL Server le ponga uno. Funciona igual.
 
 ## 2. Cómo guardamos las jerarquías y los renglones
 
