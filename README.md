@@ -29,14 +29,19 @@ PetCareWeb.slnx
 PetCare.Dominio/        Clases del dominio (las de la Unidad 2, adaptadas)
 PetCareWeb/
   Datos/                PetCareDbContext, una configuración por tabla y datos iniciales
+  Migrations/           Migración inicial de Entity Framework Core (InicialPetCare)
   Servicios/            Un servicio por formulario; las páginas no tocan el contexto
   Modelos/              Modelos de los formularios (EditForm con DataAnnotations)
-  Utilidades/           Formatos de pantalla y datos de la sesión
+  Utilidades/           Formatos de pantalla, datos de la sesión y datos de contacto de la clínica
   Components/
     Compartidos/        Componentes reutilizables (Seccion, Nota, DialogoConfirmacion, FacturaImprimible...)
-    Layout/             Marco con encabezado e índice lateral
-    Pages/              F0 a F6, cada una con su archivo .razor.cs
-  wwwroot/css/          Estilo "Expediente clínico"
+    Layout/             Marco del personal, marco del inicio de sesión y marco de la página pública
+    Pages/              Página pública, panel y F0 a F6, cada una con su archivo .razor.cs
+  wwwroot/css/          Estilo "Expediente clínico" (petcare.css) y estilo de la página pública (landing.css)
+  wwwroot/img/landing/  Imágenes de la página pública
+BaseDeDatos.sql         Script de la base de datos a partir del diagrama (referencia del esquema)
+DatosDePrueba.sql       Datos de ejemplo para probar todas las pantallas
+img/                    Imágenes originales de la página pública
 Evidencia_U3/           Estructura del informe de la evidencia de desempeño y guía de ataques
 ```
 
@@ -152,5 +157,9 @@ Para correr el estado `antes-robustez` se necesita la migración que está en `m
 
 - `DISENO.md`: decisiones de diseño (las seis preguntas del producto).
 - `IA.md`: bitácora de uso de IA.
+- `BaseDeDatos.sql`: el esquema del diagrama de base de datos. No hace falta ejecutarlo: la migración crea la misma base.
+- `DatosDePrueba.sql`: datos de ejemplo (paso 5 de la instalación).
 - `Evidencia_U3/`: estructura del informe de la evidencia de desempeño y guía para ejecutar los ataques.
-- `videos.md`: enlaces a los vídeos.
+- `videos.md`: enlaces a los vídeos de la Unidad 2 y de la Unidad 3.
+
+El diagrama de clases y las historias de usuario de la Unidad 2 quedaron en la rama `unidad-2-final`.
