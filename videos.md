@@ -4,7 +4,7 @@
 
 | Integrante | Enlace |
 |---|---|
-| Ader Quitana | Pendiente |
+| Ader Quitana | https://drive.google.com/file/d/1ORsROmWfkOvB2dSWQCEUZcRpIBgg7Ptw/view?usp=sharing |
 | Luis Toledo | Pendiente |
 | Wilson Caraballo | Pendiente |
 | Adel Ramos | https://drive.google.com/file/d/1wlYYKJ0vl0sP1D858vr6sSxfFci8WRUQ/view?usp=sharing |
