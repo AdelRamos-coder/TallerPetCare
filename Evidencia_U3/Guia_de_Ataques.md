@@ -92,7 +92,15 @@ Después del mensaje, revisar si los datos digitados siguen en el formulario y c
 
 ### A4 · Base de datos caída
 
-1. Con la aplicación abierta en **Citas**, detener SQL Server: `services.msc` > **SQL Server (MSSQLSERVER)** (o **SQL Server (SQLEXPRESS)**) > **Detener**. Si usan LocalDB: `sqllocaldb stop MSSQLLocalDB` en una terminal.
+1. Con la aplicación abierta en **Citas**, detener SQL Server: `services.msc` > **SQL Server (MSSQLSERVER)** (o **SQL Server (SQLEXPRESS)**) > **Detener**.
+
+   Si usan LocalDB, detener la instancia no sirve: se vuelve a encender sola en cuanto la aplicación se conecta. En ese caso pongan la base fuera de línea desde una terminal:
+
+   ```
+   sqlcmd -S "(localdb)\MSSQLLocalDB" -E -Q "ALTER DATABASE [PetCareWeb] SET OFFLINE WITH ROLLBACK IMMEDIATE"
+   ```
+
+   La aplicación recibe la misma SqlException que con el servidor apagado.
 2. Intentar registrar:
 
 | Campo | Valor |
@@ -104,7 +112,11 @@ Después del mensaje, revisar si los datos digitados siguen en el formulario y c
 | Motivo | `Revisión de piel` |
 
 3. Recargar la página (F5 del navegador) para probar la carga.
-4. Volver a iniciar el servicio de SQL Server al terminar.
+4. Volver a iniciar el servicio de SQL Server al terminar. Con LocalDB, volver a poner la base en línea:
+
+   ```
+   sqlcmd -S "(localdb)\MSSQLLocalDB" -E -Q "ALTER DATABASE [PetCareWeb] SET ONLINE"
+   ```
 
 Comparar el mensaje con el de A3: deben ser distintos.
 
