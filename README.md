@@ -6,10 +6,12 @@ Programación Orientada a Objetos (SD1007) · Grupo 053 · 2026-II · Producto d
 
 ## Integrantes
 
-- Ader Quitana
-- Luis Toledo
-- Wilson Caraballo
-- Adel Ramos
+| Integrante | Usuario de GitHub |
+|---|---|
+| Ader Quitana | AderDevP |
+| Luis Toledo | Jor3pore |
+| Wilson Caraballo | wilson22c, wilsoncaraballo520-afk |
+| Adel Ramos | AdelRamos-coder, adelramos424 |
 
 ## Tecnología
 
