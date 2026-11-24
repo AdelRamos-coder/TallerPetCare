@@ -231,7 +231,7 @@ Firma: ______
 
 ### Wilson Caraballo
 
-[Texto]
+Gracias a este trabajo comprendimos como funcionan los distintos software y todas sus capas en la arquitectura del software y todo su desarrollo interno, aprendimos a manejar a controlar el uso de la IA, y a tener debates de la IA, y comprendimos que: si no sabes controlar la IA y no tienes un un buen uso de esta, esta te puede fallar, mientras que si la sabes manejar obtendras los mejores resultados posibles marcando la diferencia sobre los demas, la parte del codigo que entiendo menos es la parte del desarrollo web, fue donde nosotros hicimos las propuestas de diseño para la IA y la IA se encargo de desarrolllar y ejecutar nuestras ideas, nosotros nos enfocamos en ser los lideres y la IA nuestra empleada, hay que tener cuidado con que informacion damos, en este trabajo comprendi y hasta la IA me lo dio entender, que uno nunca debe compartir las claves tales como las api keys, que son de confidencialdiad
 
 Documento: ______
 
