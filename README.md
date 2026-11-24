@@ -68,14 +68,15 @@ Cambien solo el valor de `Server` según su instalación:
 
 `Connect Timeout=5` hace que, si SQL Server está apagado, la aplicación avise en 5 segundos en vez de quedarse esperando.
 
-### 3. Crear la migración inicial (solo la primera vez)
+### 3. Crear la base de datos
 
-La base de datos se crea con Entity Framework Core a partir de las clases de configuración de `PetCareWeb/Datos`, que reproducen `BaseDeDatos.sql` (tablas, llaves, UNIQUE, CHECK, índices y comportamiento de las llaves foráneas). La migración se genera una vez y se sube al repositorio.
+La base de datos se crea con Entity Framework Core a partir de las clases de configuración de `PetCareWeb/Datos`, que reproducen `BaseDeDatos.sql` (tablas, llaves, UNIQUE, CHECK, índices y comportamiento de las llaves foráneas). La migración inicial, `InicialPetCare`, ya está en `PetCareWeb/Migrations`: no hay que generarla.
 
-En Visual Studio: **Herramientas > Administrador de paquetes NuGet > Consola del Administrador de paquetes**, con `PetCareWeb` como proyecto predeterminado:
+Basta con ejecutar la aplicación. Al arrancar, `Program.cs` llama a `Database.Migrate()`, que crea la base de datos `PetCareWeb` si no existe y aplica las migraciones que falten.
+
+Si prefieren crearla antes de ejecutar, en Visual Studio: **Herramientas > Administrador de paquetes NuGet > Consola del Administrador de paquetes**, con `PetCareWeb` como proyecto predeterminado:
 
 ```
-Add-Migration InicialPetCare
 Update-Database
 ```
 
@@ -83,23 +84,22 @@ O desde una terminal en la carpeta del repositorio:
 
 ```
 dotnet tool install --global dotnet-ef
-dotnet ef migrations add InicialPetCare --project PetCareWeb
 dotnet ef database update --project PetCareWeb
 ```
-
-Después suban la carpeta `PetCareWeb/Migrations` al repositorio:
-
-```
-git add PetCareWeb/Migrations
-git commit -m "Agrega la migracion inicial de la base de datos"
-git push
-```
-
-A partir de ahí, cualquier equipo que clone el repositorio solo tiene que ejecutar la aplicación: al arrancar, `Program.cs` llama a `Database.Migrate()`, que crea la base de datos `PetCareWeb` si no existe y aplica las migraciones que falten.
 
 ### 4. Ejecutar
 
 F5 en Visual Studio, o `dotnet run --project PetCareWeb`. Abre en `https://localhost:7180`.
+
+### 5. Cargar datos de prueba (opcional)
+
+`DatosDePrueba.sql` carga citas, hospitalizaciones, lotes y facturas de ejemplo para probar todas las pantallas. Se ejecuta una sola vez, después de que exista la base de datos: se puede abrir en SQL Server Management Studio sobre la base `PetCareWeb`, o correr desde una terminal (con el mismo `Server` de la cadena de conexión):
+
+```
+sqlcmd -S localhost -d PetCareWeb -i DatosDePrueba.sql
+```
+
+Si los datos ya estaban cargados, el script no hace nada.
 
 ## Usuarios de prueba
 
@@ -112,10 +112,21 @@ La migración inicial deja creados estos usuarios y las 14 jaulas de la clínica
 
 Jaulas: J-01 a J-05 pequeñas ($25.000 por día), J-06 a J-10 medianas ($38.000) y J-11 a J-14 grandes ($52.000).
 
+## Página pública
+
+`/` es la página para los dueños de mascotas: presenta la clínica, sus servicios y precios, y tiene el botón **Agendar cita**, que abre WhatsApp con el mensaje listo. No pide sesión y no consulta la base de datos (los precios salen de `CitaVeterinaria` y `Jaula` en el dominio).
+
+- El panel del personal está en `/panel`; el enlace **Acceso personal** de la página lleva al inicio de sesión (con sesión iniciada dice **Ir al panel**).
+- Teléfono, dirección, horario y mapa se configuran en `PetCareWeb/appsettings.json`, sección `Clinica`. `WhatsApp` va con indicativo y solo dígitos (por ejemplo `573001234567`). `MostrarOpiniones` se pone en `true` cuando haya testimonios reales.
+- Las imágenes están en `PetCareWeb/wwwroot/img/landing/` (originales en `img/`). Si falta una, la página muestra un recuadro con su descripción.
+- Nombres y especialidades del equipo están en `PetCareWeb/Components/Pages/Landing.razor`, marcados con [corchetes].
+
 ## Formularios
 
 | Código | Pantalla | Ruta | Historias |
 |---|---|---|---|
+| — | Página pública | `/` | — |
+| — | Panel del personal | `/panel` | — |
 | F0 | Inicio de sesión | `/iniciar-sesion` | HU-01, HU-02 |
 | F1 | Citas de consulta | `/citas` | HU-03, HU-04 |
 | F2 | Hospitalizaciones | `/hospitalizaciones` | HU-05, HU-06 |
