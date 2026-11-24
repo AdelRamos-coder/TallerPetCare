@@ -9,6 +9,7 @@ namespace PetCareWeb.Datos.Configuraciones
     /// </summary>
     public class UsuarioConfiguracion : IEntityTypeConfiguration<Usuario>
     {
+        /// <summary>Configura la tabla Usuarios: columnas, llaves y restricciones.</summary>
         public void Configure(EntityTypeBuilder<Usuario> builder)
         {
             builder.ToTable("Usuarios", tabla =>

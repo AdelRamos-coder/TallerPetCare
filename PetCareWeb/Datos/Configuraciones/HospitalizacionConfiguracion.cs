@@ -9,6 +9,7 @@ namespace PetCareWeb.Datos.Configuraciones
     /// </summary>
     public class HospitalizacionConfiguracion : IEntityTypeConfiguration<Hospitalizacion>
     {
+        /// <summary>Configura las columnas de la hospitalización: columnas, llaves y restricciones.</summary>
         public void Configure(EntityTypeBuilder<Hospitalizacion> builder)
         {
             builder.Property(h => h.TarifaDiaria).HasPrecision(18, 2);

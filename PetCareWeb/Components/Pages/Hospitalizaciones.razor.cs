@@ -31,6 +31,7 @@ namespace PetCareWeb.Components.Pages
         private string? mensajeError;
         private string tituloError = "No se pudo completar la operación";
 
+        /// <summary>Carga las hospitalizaciones y el estado de las jaulas al abrir la página.</summary>
         protected override async Task OnInitializedAsync()
         {
             await CargarConManejoAsync(null);

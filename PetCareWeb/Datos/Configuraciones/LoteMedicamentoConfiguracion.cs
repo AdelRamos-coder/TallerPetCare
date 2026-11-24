@@ -9,6 +9,7 @@ namespace PetCareWeb.Datos.Configuraciones
     /// </summary>
     public class LoteMedicamentoConfiguracion : IEntityTypeConfiguration<LoteMedicamento>
     {
+        /// <summary>Configura las columnas del lote: columnas, llaves y restricciones.</summary>
         public void Configure(EntityTypeBuilder<LoteMedicamento> builder)
         {
             builder.Property(l => l.Tipo)

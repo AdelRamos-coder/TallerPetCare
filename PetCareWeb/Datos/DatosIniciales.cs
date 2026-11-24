@@ -9,6 +9,7 @@ namespace PetCareWeb.Datos
     /// </summary>
     public static class DatosIniciales
     {
+        /// <summary>Los dos usuarios de prueba: un administrador y una recepcionista.</summary>
         public static readonly object[] Usuarios =
         {
             new
@@ -29,6 +30,7 @@ namespace PetCareWeb.Datos
             }
         };
 
+        /// <summary>Las 14 jaulas de la clínica: 5 pequeñas, 5 medianas y 4 grandes.</summary>
         public static readonly object[] Jaulas =
         {
             new { Id = 1, Codigo = "J-01", Tamano = TamanoJaula.Pequeno, TarifaDia = 25000m },

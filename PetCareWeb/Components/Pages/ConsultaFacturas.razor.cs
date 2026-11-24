@@ -22,6 +22,7 @@ namespace PetCareWeb.Components.Pages
         private bool buscando;
         private string? mensajeError;
 
+        /// <summary>Al abrir la página muestra todas las facturas, sin filtros.</summary>
         protected override async Task OnInitializedAsync()
         {
             await BuscarAsync();

@@ -40,6 +40,7 @@ namespace PetCareWeb.Components.Pages
 
         private string? mensajeError;
 
+        /// <summary>Crea el modelo del formulario si no llegó uno con el envío.</summary>
         protected override void OnInitialized()
         {
             Modelo ??= new ModeloInicioSesion();

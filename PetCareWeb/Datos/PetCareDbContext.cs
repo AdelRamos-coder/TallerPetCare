@@ -10,6 +10,7 @@ namespace PetCareWeb.Datos
     /// </summary>
     public class PetCareDbContext : DbContext
     {
+        /// <summary>Crea el contexto con las opciones de Program.cs (cadena de conexión de SQL Server).</summary>
         public PetCareDbContext(DbContextOptions<PetCareDbContext> opciones)
             : base(opciones)
         {
@@ -39,6 +40,7 @@ namespace PetCareWeb.Datos
         /// <summary>Solo los lotes de medicamento.</summary>
         public DbSet<LoteMedicamento> Lotes => Set<LoteMedicamento>();
 
+        /// <summary>Aplica todas las clases de configuración de la carpeta Configuraciones.</summary>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(PetCareDbContext).Assembly);

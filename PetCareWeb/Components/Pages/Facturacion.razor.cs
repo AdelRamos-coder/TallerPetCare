@@ -17,6 +17,7 @@ namespace PetCareWeb.Components.Pages
         private const string MensajeSinConexion =
             "No pudimos comunicarnos con la base de datos. La factura quedó como estaba; intenta de nuevo en unos minutos.";
 
+        /// <summary>Id de la factura abierta; viene de la ruta /facturacion/{Id}. Es null cuando se va a crear una factura nueva.</summary>
         [Parameter]
         public int? Id { get; set; }
 
@@ -52,6 +53,7 @@ namespace PetCareWeb.Components.Pages
         private string? mensajeError;
         private string tituloError = "No se pudo completar la operación";
 
+        /// <summary>Lee de la sesión el usuario emisor y si es administrador.</summary>
         protected override async Task OnInitializedAsync()
         {
             AuthenticationState estado = await EstadoAutenticacion;
@@ -60,6 +62,7 @@ namespace PetCareWeb.Components.Pages
             esAdministrador = estado.User.EsAdministrador();
         }
 
+        /// <summary>Carga la factura de la ruta, o deja el formulario listo para crear una nueva si no hay Id.</summary>
         protected override async Task OnParametersSetAsync()
         {
             CerrarMensajes();

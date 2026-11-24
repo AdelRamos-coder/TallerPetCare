@@ -16,6 +16,7 @@ namespace PetCareWeb.Datos.Configuraciones
         /// </summary>
         public const string Discriminador = "TipoProducto";
 
+        /// <summary>Configura la tabla Productos: columnas, llaves y restricciones.</summary>
         public void Configure(EntityTypeBuilder<ProductoFarmacia> builder)
         {
             builder.ToTable("Productos", tabla =>

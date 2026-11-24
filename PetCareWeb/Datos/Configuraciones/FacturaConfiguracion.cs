@@ -10,6 +10,7 @@ namespace PetCareWeb.Datos.Configuraciones
     /// </summary>
     public class FacturaConfiguracion : IEntityTypeConfiguration<Factura>
     {
+        /// <summary>Configura la tabla Facturas: columnas, llaves y restricciones.</summary>
         public void Configure(EntityTypeBuilder<Factura> builder)
         {
             builder.ToTable("Facturas");

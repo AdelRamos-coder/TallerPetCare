@@ -9,11 +9,16 @@ namespace PetCare
     /// </summary>
     public class ReglaNegocioException : Exception
     {
+        /// <summary>Crea la excepción con el mensaje para el usuario.</summary>
+        /// <param name="mensaje">Mensaje para mostrar al usuario.</param>
         public ReglaNegocioException(string mensaje)
             : base(mensaje)
         {
         }
 
+        /// <summary>Crea la excepción con el mensaje y la excepción que la originó.</summary>
+        /// <param name="mensaje">Mensaje para mostrar al usuario.</param>
+        /// <param name="causa">Excepción original, por ejemplo la que lanza la base de datos.</param>
         public ReglaNegocioException(string mensaje, Exception causa)
             : base(mensaje, causa)
         {

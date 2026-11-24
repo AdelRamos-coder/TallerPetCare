@@ -42,6 +42,7 @@ namespace PetCareWeb.Components.Pages
         private int facturasHoy;
         private decimal facturadoHoy;
 
+        /// <summary>Arma el resumen del día: saludo, citas de hoy, hospitalizaciones activas, lotes por agotarse y lo facturado hoy.</summary>
         protected override async Task OnInitializedAsync()
         {
             AuthenticationState estado = await EstadoAutenticacion;

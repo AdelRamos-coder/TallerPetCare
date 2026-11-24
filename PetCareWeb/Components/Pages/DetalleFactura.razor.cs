@@ -14,6 +14,7 @@ namespace PetCareWeb.Components.Pages
         private const string MensajeSinConexion =
             "No pudimos comunicarnos con la base de datos. Intenta de nuevo en unos minutos.";
 
+        /// <summary>Id de la factura que se muestra; viene de la ruta /facturas/{Id}.</summary>
         [Parameter]
         public int Id { get; set; }
 
@@ -37,6 +38,7 @@ namespace PetCareWeb.Components.Pages
         private string? mensajeError;
         private string tituloError = "No se pudo anular la factura";
 
+        /// <summary>Lee de la sesión el usuario y si es administrador, para saber si se muestra el botón de anular.</summary>
         protected override async Task OnInitializedAsync()
         {
             AuthenticationState estado = await EstadoAutenticacion;
@@ -44,6 +46,7 @@ namespace PetCareWeb.Components.Pages
             esAdministrador = estado.User.EsAdministrador();
         }
 
+        /// <summary>Carga la factura cada vez que cambia el Id de la ruta.</summary>
         protected override async Task OnParametersSetAsync()
         {
             mensajeCarga = null;

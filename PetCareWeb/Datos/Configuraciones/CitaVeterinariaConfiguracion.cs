@@ -9,6 +9,7 @@ namespace PetCareWeb.Datos.Configuraciones
     /// </summary>
     public class CitaVeterinariaConfiguracion : IEntityTypeConfiguration<CitaVeterinaria>
     {
+        /// <summary>Configura las columnas de la cita: columnas, llaves y restricciones.</summary>
         public void Configure(EntityTypeBuilder<CitaVeterinaria> builder)
         {
             builder.Property(c => c.CedulaCliente).HasMaxLength(20);

@@ -46,6 +46,7 @@ namespace PetCareWeb.Components.Pages
         private string? errorAjuste;
         private string tituloErrorAjuste = "No se pudo guardar el cambio";
 
+        /// <summary>Carga la lista de citas al abrir la página. Si la base de datos no responde, muestra un aviso en vez de fallar.</summary>
         protected override async Task OnInitializedAsync()
         {
             try

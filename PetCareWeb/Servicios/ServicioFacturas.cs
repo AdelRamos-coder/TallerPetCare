@@ -14,6 +14,7 @@ namespace PetCareWeb.Servicios
 
         private readonly IDbContextFactory<PetCareDbContext> _fabrica;
 
+        /// <summary>Recibe por inyección de dependencias la fábrica que crea un contexto corto por operación.</summary>
         public ServicioFacturas(IDbContextFactory<PetCareDbContext> fabrica)
         {
             _fabrica = fabrica;

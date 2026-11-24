@@ -11,6 +11,7 @@ namespace PetCareWeb.Datos.Configuraciones
     /// </summary>
     public class RenglonFacturaConfiguracion : IEntityTypeConfiguration<RenglonFactura>
     {
+        /// <summary>Configura la tabla LineasFactura: columnas, llaves y restricciones.</summary>
         public void Configure(EntityTypeBuilder<RenglonFactura> builder)
         {
             builder.ToTable("LineasFactura", tabla =>

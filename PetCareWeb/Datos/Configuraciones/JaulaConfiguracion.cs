@@ -10,6 +10,7 @@ namespace PetCareWeb.Datos.Configuraciones
     /// </summary>
     public class JaulaConfiguracion : IEntityTypeConfiguration<Jaula>
     {
+        /// <summary>Configura la tabla Jaulas: columnas, llaves y restricciones.</summary>
         public void Configure(EntityTypeBuilder<Jaula> builder)
         {
             builder.ToTable("Jaulas", tabla =>

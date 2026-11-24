@@ -28,6 +28,7 @@ namespace PetCareWeb.Components.Pages
         private string? mensajeError;
         private string tituloError = "No se pudo registrar el lote";
 
+        /// <summary>Carga la lista de lotes al abrir la página.</summary>
         protected override async Task OnInitializedAsync()
         {
             try

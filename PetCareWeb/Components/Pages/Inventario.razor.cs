@@ -21,6 +21,7 @@ namespace PetCareWeb.Components.Pages
         private List<FilaInventario> productos = new();
         private string? mensajeError;
 
+        /// <summary>Carga los servicios y los productos que se muestran en el inventario.</summary>
         protected override async Task OnInitializedAsync()
         {
             try

@@ -9,6 +9,7 @@ namespace PetCareWeb.Utilidades
         /// <summary>Nombre de la sección en appsettings.json.</summary>
         public const string Seccion = "Clinica";
 
+        /// <summary>Nombre de la clínica.</summary>
         public string Nombre { get; set; } = "PetCare";
 
         /// <summary>Número de WhatsApp con indicativo de país, por ejemplo 573001234567.</summary>
@@ -17,8 +18,10 @@ namespace PetCareWeb.Utilidades
         /// <summary>Número como se le muestra al público, por ejemplo +57 300 123 4567.</summary>
         public string TelefonoVisible { get; set; } = string.Empty;
 
+        /// <summary>Dirección de la clínica.</summary>
         public string Direccion { get; set; } = string.Empty;
 
+        /// <summary>Horario de atención.</summary>
         public string Horario { get; set; } = string.Empty;
 
         /// <summary>Enlace a Google Maps (o similar) para el botón "Cómo llegar".</summary>
