@@ -23,7 +23,7 @@ Las secciones marcadas **[Lo escribe el equipo]** son las que la evidencia exige
 
 F1 · Citas de consulta (`/citas`).
 
-Elegimos Citas porque es el formulario con más operaciones sobre la misma tabla: registrar, cambiar la duración, confirmar el veterinario y cambiar el estado, todo en la tabla Servicios. Ahí ocurrió el primer fallo que contó la Dra. Ospina, la duración de 500 minutos. Además tiene los tres tipos de dato que se pueden atacar: texto con largo máximo, un número con rango y una fecha.
+Escogimos Citas porque es el formulario que más cosas hace sobre una misma tabla: ahí se registra la cita, se cambia la duración, se confirma el veterinario y se cambia el estado, y todo eso queda en la tabla Servicios. Además, el primer problema que nos contó la Dra. Ospina pasó justamente ahí, cuando Yuliana puso 500 minutos de duración. Y nos servía para probar los tres tipos de dato que más se prestan para romper algo: un texto con largo máximo (el motivo), un número con rango (la duración) y una fecha.
 
 Archivos del formulario:
 
@@ -99,7 +99,7 @@ Atrapar todo con un solo catch (Exception): todos los errores terminan con el mi
 
 Usar excepciones para el flujo normal: lanzarlas en casos que son esperados vuelve el código más lento y más difícil de leer, porque una excepción debería ser algo que no se esperaba.
 
-En PetCare lo evitamos así: ConfirmarVeterinario devuelve false cuando la cita ya tiene veterinario, en vez de lanzar una excepción. Eso es algo que pasa normalmente, y la pantalla simplemente muestra un aviso de que el veterinario se asigna una sola vez. Y en RegistrarAsync cada tipo de error tiene su propio catch y su propio mensaje.
+En PetCare lo evitamos así: ConfirmarVeterinario devuelve false cuando la cita ya tiene veterinario, en vez de lanzar una excepción. Eso es algo que pasa normalmente, y la pantalla simplemente muestra un aviso de que el veterinario se asigna una sola vez. Y en RegistrarAsync cada tipo de error tiene su propio catch: el código duplicado, la regla de la clínica, el dato mal escrito y la base de datos caída le muestran al usuario mensajes distintos, y solo lo que no esperábamos cae en el catch general.
 
 Fuente: Microsoft Learn, "Procedimientos recomendados para excepciones". https://learn.microsoft.com/dotnet/standard/exceptions/best-practices-for-exceptions
 
