@@ -2,7 +2,7 @@
 
 Evidencia de desempeño de la Unidad 3 (10 %). Máximo 10 páginas sin contar las capturas de los anexos.
 
-Falta: las reflexiones del Anexo C, que cada integrante escribe sin ayuda de IA, y las firmas. El PDF de este archivo se genera sin los documentos de identidad.
+Falta: las firmas del Anexo C. El PDF de este archivo se genera sin los documentos de identidad.
 
 ---
 
@@ -239,7 +239,7 @@ Firma: ______
 
 ### Adel Ramos
 
-[Texto]
+Gracias a esta materia y las diferentes clases, y la reunnion de IA que tuvimos, entendi el uso de la IA y del Poo en el software, y hacia donde apunta el futuro y el mundo tech con estas dos, la programacion orientada a objetos es un pilar fundamental que todo ingeniero de software debe comprender y la IA es como nuestra hija, sus errores son nuestra responsabilidad en caso de que esta haga algo malo, nosotros somos los encargados de asumir su error, la parte que menos entiendo del codigo fue la parte WEb que fue la que desarrollo la IA, pero no estoy en la ignorancia porque nosotros fuimos los encargados de diseñar y orquestar mientras la IA cumplia todos nuestras peticiones sin hacer nada que no le pidieramos, y como un compañero dijo, la parte que no se debe compartir a una IA ni a nadie son las api keys porque son las claves que contienen informacion importante y no se deberian compartir con nadie por seguridad
 
 Documento: ______
 
