@@ -215,7 +215,7 @@ Entre 150 y 200 palabras por integrante, escritas sin ayuda de IA, en un solo te
 
 ### Ader Quitana
 
-[Texto]
+Gracias a esta materia comprendi el uso de la programacion orientada a objetos y todos sus pialres fundamentales, todo lo que con lleva a hacer un analisis y un buen ciclo de vida de este, empezando desde el analisis de un diagrama UML, lo que respecta a diagrama UML donde se dan todas las clases y metodos, que es la parte de analisis hasta la parte del desarrollo de codigo, gracias a eso entendi como funciona el software, y todo el trabajo que es relacioando con este, gracias a lo aprendido en este trabajo y en esta materia, me siento orgulloso porque puedo ofrecer soluciones de alta calidad porque la programacion orientada a objetos es algo obligatorio y no es una desicion, es algo que todo el mundo deberia saber y aprender y aplicar en el dia a dia o ofreciendo las diferentes soluciones en el mundo tech del software
 
 Documento: ______
 
