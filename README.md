@@ -42,7 +42,7 @@ PetCareWeb/
 BaseDeDatos.sql         Script de la base de datos a partir del diagrama (referencia del esquema)
 DatosDePrueba.sql       Datos de ejemplo para probar todas las pantallas
 img/                    Imágenes originales de la página pública
-Evidencia_U3/           Estructura del informe de la evidencia de desempeño y guía de ataques
+Evidencia_U3/           Informe de la evidencia de desempeño (.md y .pdf), capturas de los ataques y guía de ataques
 ```
 
 ## Cómo levantarlo en un equipo nuevo
@@ -159,7 +159,7 @@ Para correr el estado `antes-robustez` se necesita la migración que está en `m
 - `IA.md`: bitácora de uso de IA.
 - `BaseDeDatos.sql`: el esquema del diagrama de base de datos. No hace falta ejecutarlo: la migración crea la misma base.
 - `DatosDePrueba.sql`: datos de ejemplo (paso 5 de la instalación).
-- `Evidencia_U3/`: estructura del informe de la evidencia de desempeño y guía para ejecutar los ataques.
+- `Evidencia_U3/`: informe de la evidencia de desempeño (`Informe_Evidencia.md` y su PDF), capturas de los ocho ataques antes y después, y guía para ejecutarlos.
 - `videos.md`: enlaces a los vídeos de la Unidad 2 y de la Unidad 3.
 
 El diagrama de clases y las historias de usuario de la Unidad 2 quedaron en la rama `unidad-2-final`.
