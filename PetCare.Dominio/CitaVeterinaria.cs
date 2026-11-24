@@ -8,9 +8,14 @@ namespace PetCare
     {
         private const int DuracionMinima = 15;
         private const int DuracionMaxima = 180;
-        private const int MinutosBase = 30;
-        private const decimal TarifaBase = 60000m;
-        private const decimal TarifaMinutoAdicional = 1500m;
+        /// <summary>Minutos que cubre la tarifa base.</summary>
+        public const int MinutosBase = 30;
+
+        /// <summary>Precio de la consulta hasta <see cref="MinutosBase"/> minutos.</summary>
+        public const decimal TarifaBase = 60000m;
+
+        /// <summary>Precio de cada minuto después de <see cref="MinutosBase"/>.</summary>
+        public const decimal TarifaMinutoAdicional = 1500m;
 
         /// <summary>Largo máximo de la cédula (columna CedulaCliente, NVARCHAR(20)).</summary>
         public const int LargoCedula = 20;
@@ -186,7 +191,17 @@ namespace PetCare
         /// </summary>
         public override decimal CalcularCosto()
         {
-            int minutosAdicionales = Math.Max(0, DuracionMinutos - MinutosBase);
+            return CostoPara(DuracionMinutos);
+        }
+
+        /// <summary>
+        /// Precio de una consulta de la duración indicada: tarifa base hasta
+        /// <see cref="MinutosBase"/> minutos más cada minuto adicional.
+        /// Ejemplo: 45 minutos valen $82.500.
+        /// </summary>
+        public static decimal CostoPara(int minutos)
+        {
+            int minutosAdicionales = Math.Max(0, minutos - MinutosBase);
             return TarifaBase + minutosAdicionales * TarifaMinutoAdicional;
         }
 

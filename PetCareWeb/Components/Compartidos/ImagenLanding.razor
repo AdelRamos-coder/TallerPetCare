@@ -1,0 +1,33 @@
+@* Imagen de la página pública. Si el archivo todavía no está en wwwroot/img/landing,
+   muestra un recuadro con la descripción en lugar de una imagen rota. *@
+@inject IWebHostEnvironment Entorno
+
+@if (Existe)
+{
+    <img src="@($"img/landing/{Archivo}")" alt="@Alt" width="@Ancho" height="@Alto"
+         class="@Clase" loading="@(Prioritaria ? "eager" : "lazy")"
+         fetchpriority="@(Prioritaria ? "high" : "auto")" decoding="async" />
+}
+else
+{
+    <div class="ph @Clase" role="img" aria-label="@Alt" style="aspect-ratio:@Ancho / @Alto">@Alt</div>
+}
+
+@code {
+    /// <summary>Nombre del archivo dentro de wwwroot/img/landing, por ejemplo img-01-hero.jpg.</summary>
+    [Parameter, EditorRequired] public string Archivo { get; set; } = string.Empty;
+
+    /// <summary>Texto alternativo; también es lo que se lee en el recuadro si falta la imagen.</summary>
+    [Parameter, EditorRequired] public string Alt { get; set; } = string.Empty;
+
+    /// <summary>Ancho y alto reales del archivo: evitan saltos de diseño mientras carga.</summary>
+    [Parameter, EditorRequired] public int Ancho { get; set; }
+    [Parameter, EditorRequired] public int Alto { get; set; }
+
+    [Parameter] public string? Clase { get; set; }
+
+    /// <summary>true solo para la imagen principal, que se ve sin hacer scroll.</summary>
+    [Parameter] public bool Prioritaria { get; set; }
+
+    private bool Existe => Entorno.WebRootFileProvider.GetFileInfo($"img/landing/{Archivo}").Exists;
+}

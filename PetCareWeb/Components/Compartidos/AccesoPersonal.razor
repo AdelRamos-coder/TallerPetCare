@@ -1,0 +1,12 @@
+@* Enlace discreto de la página pública hacia el sistema del personal.
+   Con sesión iniciada lleva directo al panel. La navegación es completa
+   (sin "enhanced navigation") porque el panel es interactivo y la landing no. *@
+
+<AuthorizeView>
+    <Authorized>
+        <a class="lp-acceso" href="panel" data-enhance-nav="false">Ir al panel</a>
+    </Authorized>
+    <NotAuthorized>
+        <a class="lp-acceso" href="iniciar-sesion" data-enhance-nav="false">Acceso personal</a>
+    </NotAuthorized>
+</AuthorizeView>

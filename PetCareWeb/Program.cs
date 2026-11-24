@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using PetCareWeb.Components;
 using PetCareWeb.Datos;
 using PetCareWeb.Servicios;
+using PetCareWeb.Utilidades;
 
 // Pesos colombianos y fechas en español en toda la aplicación.
 var cultura = new CultureInfo("es-CO");
@@ -37,6 +38,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
+
+// Datos de contacto de la página pública (sección "Clinica" de appsettings.json).
+builder.Services.Configure<OpcionesClinica>(builder.Configuration.GetSection(OpcionesClinica.Seccion));
 
 builder.Services.AddScoped<ServicioAutenticacion>();
 builder.Services.AddScoped<ServicioCitas>();

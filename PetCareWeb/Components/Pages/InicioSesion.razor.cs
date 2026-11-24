@@ -92,7 +92,7 @@ namespace PetCareWeb.Components.Pages
                 return ReturnUrl;
             }
 
-            return "/";
+            return "/panel";
         }
     }
 }

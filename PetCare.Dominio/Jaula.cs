@@ -13,6 +13,18 @@ namespace PetCare
             { TamanoJaula.Grande, 52000m }
         };
 
+        /// <summary>
+        /// Tarifa por día de una jaula del tamaño indicado.
+        /// La usa la página pública para mostrar los mismos precios que cobra el sistema.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">Si el tamaño no existe.</exception>
+        public static decimal TarifaDiaPara(TamanoJaula tamano)
+        {
+            return TarifasPorTamano.TryGetValue(tamano, out decimal tarifa)
+                ? tarifa
+                : throw new ArgumentOutOfRangeException(nameof(tamano), tamano, "El tamaño de la jaula no es válido");
+        }
+
         /// <summary>Identificador que asigna la base de datos.</summary>
         public int Id { get; private set; }
 

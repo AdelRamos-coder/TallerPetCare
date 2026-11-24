@@ -1,0 +1,229 @@
+@page "/"
+@attribute [AllowAnonymous]
+@attribute [ExcludeFromInteractiveRouting]
+@layout LayoutPublico
+@using Microsoft.Extensions.Options
+
+@* Página pública para los dueños de mascotas (diseño 11 · "Sala de espera").
+   Se dibuja en el servidor sin conexión interactiva: carga rápido y no depende de la base de datos.
+   Los precios salen del dominio, los datos de contacto de appsettings.json (sección "Clinica"). *@
+
+<PageTitle>@Clinica.Nombre · Clínica veterinaria</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="Clínica veterinaria @Clinica.Nombre: consultas, hospitalización y farmacia. Agenda tu cita por WhatsApp." />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" />
+    <link rel="stylesheet" href="@Assets["css/landing.css"]" />
+</HeadContent>
+
+<div class="lp">
+    <header class="lp-contenedor lp-encabezado">
+        <a class="lp-marca" href="">
+            <ImagenLanding Archivo="img-11-logo.png" Alt="Logo de PetCare" Ancho="256" Alto="256" />
+            <span>@Clinica.Nombre</span>
+        </a>
+        <nav class="lp-menu" aria-label="Secciones">
+            <a href="#servicios">Servicios</a>
+            <a href="#tu-visita">Tu visita</a>
+            <a href="#equipo">Equipo</a>
+            <a href="#ubicacion">Ubicación</a>
+        </nav>
+        <AccesoPersonal />
+    </header>
+
+    <main>
+        <section class="lp-contenedor lp-hero">
+            <div class="lp-dos">
+                <div class="lp-hero-texto">
+                    <span class="lp-etiqueta">Clínica veterinaria</span>
+                    <h1>Siéntate tranquilo. Tu mascota está en buenas manos.</h1>
+                    <p class="lp-apagado">Consultas sin afán, hospitalización cómoda y farmacia confiable. Agenda en un mensaje.</p>
+                    <div>
+                        <a class="lp-boton lp-boton-principal" href="@WhatsApp("Hola, quiero agendar una cita para mi mascota.")" target="_blank" rel="noopener">
+                            <IconoWhatsApp />
+                            Agendar cita por WhatsApp
+                        </a>
+                    </div>
+                </div>
+                <ImagenLanding Archivo="img-01-hero.jpg" Clase="lp-hero-imagen" Prioritaria="true"
+                               Alt="Una dueña sentada en la sala de espera acaricia a su golden retriever"
+                               Ancho="1400" Alto="1120" />
+            </div>
+
+            <div class="lp-tarjeta lp-barra">
+                <a href="@WhatsApp("Hola, quiero agendar una cita para mi mascota.")" target="_blank" rel="noopener">
+                    <strong>Agendar cita</strong>
+                    <span class="lp-apagado">Te respondemos por WhatsApp</span>
+                </a>
+                <div>
+                    <strong>Horario</strong>
+                    <span class="lp-apagado">@Clinica.Horario</span>
+                </div>
+                <a href="@Clinica.EnlaceMapa" target="_blank" rel="noopener">
+                    <strong>Cómo llegar</strong>
+                    <span class="lp-apagado">@Clinica.Direccion</span>
+                </a>
+            </div>
+        </section>
+
+        <section id="servicios" class="lp-contenedor lp-seccion">
+            <div class="lp-seccion-titulo lp-revelar">
+                <h2>¿Qué necesita tu mascota hoy?</h2>
+                <p class="lp-apagado">Precios claros desde el principio.</p>
+            </div>
+            <div class="lp-tres">
+                <article class="lp-tarjeta lp-servicio lp-revelar">
+                    <div class="lp-servicio-imagen">
+                        <ImagenLanding Archivo="img-03-consulta.jpg" Ancho="1100" Alto="825"
+                                       Alt="Un veterinario ausculta a un cachorro beagle junto a su dueño" />
+                    </div>
+                    <div class="lp-servicio-cuerpo">
+                        <h3>Una consulta</h3>
+                        <p class="lp-apagado">Revisión, diagnóstico y control, de 15 a 180 minutos según lo que necesite.</p>
+                        <p class="lp-precio">@PrecioConsulta hasta @CitaVeterinaria.MinutosBase min</p>
+                        <p class="lp-apagado">Cada minuto adicional: @Formato.Moneda(CitaVeterinaria.TarifaMinutoAdicional)</p>
+                        <a class="lp-enlace-servicio" href="@WhatsApp("Hola, quiero agendar una consulta para mi mascota.")" target="_blank" rel="noopener">Agendar consulta <span aria-hidden="true">→</span></a>
+                    </div>
+                </article>
+
+                <article class="lp-tarjeta lp-servicio lp-revelar">
+                    <div class="lp-servicio-imagen">
+                        <ImagenLanding Archivo="img-04-hospitalizacion.jpg" Ancho="1100" Alto="825"
+                                       Alt="Una auxiliar acaricia a un perro que se recupera en su jaula" />
+                    </div>
+                    <div class="lp-servicio-cuerpo">
+                        <h3>Quedarse con nosotros</h3>
+                        <p class="lp-apagado">Hospitalización en una jaula a su medida. Se cobra por día, mínimo uno.</p>
+                        <ul class="lp-tarifas">
+                            @foreach (TamanoJaula tamano in Enum.GetValues<TamanoJaula>())
+                            {
+                                <li><span>Jaula @Formato.TextoTamano(tamano).ToLowerInvariant()</span><b class="lp-precio">@Formato.Moneda(Jaula.TarifaDiaPara(tamano))</b></li>
+                            }
+                        </ul>
+                        <a class="lp-enlace-servicio" href="@WhatsApp("Hola, quiero preguntar por la hospitalización de mi mascota.")" target="_blank" rel="noopener">Preguntar <span aria-hidden="true">→</span></a>
+                    </div>
+                </article>
+
+                <article class="lp-tarjeta lp-servicio lp-revelar">
+                    <div class="lp-servicio-imagen">
+                        <ImagenLanding Archivo="img-05-farmacia.jpg" Ancho="1100" Alto="825"
+                                       Alt="Revisión de un medicamento frente a la estantería y la nevera de vacunas" />
+                    </div>
+                    <div class="lp-servicio-cuerpo">
+                        <h3>Un medicamento</h3>
+                        <p class="lp-apagado">Vacunas, analgésicos, antibióticos y antiparasitarios. Nunca entregamos un lote vencido.</p>
+                        <p class="lp-precio">Vacunas en cadena de frío</p>
+                        <a class="lp-enlace-servicio" href="@WhatsApp("Hola, quiero preguntar por un medicamento.")" target="_blank" rel="noopener">Consultar disponibilidad <span aria-hidden="true">→</span></a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="tu-visita" class="lp-banda lp-seccion">
+            <div class="lp-contenedor lp-dos">
+                <ImagenLanding Archivo="img-06-sala-espera.jpg" Clase="lp-imagen-redonda lp-revelar" Ancho="1400" Alto="876"
+                               Alt="Recepción de la clínica: una clienta llega con su gato en el guacal" />
+                <div class="lp-revelar" style="display:flex;flex-direction:column;gap:22px">
+                    <h2>Así de simple es venir</h2>
+                    <ol class="lp-pasos">
+                        <li><span class="lp-numero">1</span><div><strong>Escríbenos</strong><p class="lp-apagado">El nombre de tu mascota y el motivo, por WhatsApp.</p></div></li>
+                        <li><span class="lp-numero">2</span><div><strong>Llega y relájate</strong><p class="lp-apagado">Tu cita ya está registrada cuando entras.</p></div></li>
+                        <li><span class="lp-numero">3</span><div><strong>Sal con todo claro</strong><p class="lp-apagado">Recibes una factura con cada servicio y medicamento explicado.</p></div></li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <section id="equipo" class="lp-contenedor lp-seccion">
+            <div class="lp-seccion-titulo lp-revelar"><h2>Quién te atiende</h2></div>
+            @* Pendiente: nombres y especialidades reales del equipo. *@
+            <div class="lp-tres">
+                <div class="lp-tarjeta lp-persona lp-revelar">
+                    <ImagenLanding Archivo="img-07-equipo-1.jpg" Ancho="600" Alto="600" Alt="Veterinaria con un cachorro en brazos" />
+                    <div><strong>[Nombre]</strong><p class="lp-apagado">[Especialidad]</p></div>
+                </div>
+                <div class="lp-tarjeta lp-persona lp-revelar">
+                    <ImagenLanding Archivo="img-08-equipo-2.jpg" Ancho="600" Alto="600" Alt="Veterinario con un gato atigrado en brazos" />
+                    <div><strong>[Nombre]</strong><p class="lp-apagado">[Especialidad]</p></div>
+                </div>
+                <div class="lp-tarjeta lp-persona lp-revelar">
+                    <ImagenLanding Archivo="img-09-equipo-3.jpg" Ancho="600" Alto="600" Alt="Auxiliar veterinaria con un conejo en brazos" />
+                    <div><strong>[Nombre]</strong><p class="lp-apagado">[Cargo]</p></div>
+                </div>
+            </div>
+
+            @if (Clinica.MostrarOpiniones)
+            {
+                @* Pendiente: testimonios reales. La sección se activa con Clinica:MostrarOpiniones = true. *@
+                <div class="lp-tres" style="margin-top:24px">
+                    <blockquote class="lp-tarjeta lp-opinion lp-revelar"><p>“[Testimonio real]”</p><cite>[Nombre] · [Mascota]</cite></blockquote>
+                    <blockquote class="lp-tarjeta lp-opinion lp-revelar"><p>“[Testimonio real]”</p><cite>[Nombre] · [Mascota]</cite></blockquote>
+                    <blockquote class="lp-tarjeta lp-opinion lp-revelar"><p>“[Testimonio real]”</p><cite>[Nombre] · [Mascota]</cite></blockquote>
+                </div>
+            }
+        </section>
+
+        <section class="lp-contenedor lp-seccion" style="padding-top:0">
+            <div class="lp-preguntas">
+                <h2 class="lp-revelar">Preguntas frecuentes</h2>
+                <details class="lp-tarjeta" open>
+                    <summary>¿Cuánto cuesta la consulta?</summary>
+                    <p class="lp-apagado">@PrecioConsulta hasta @CitaVeterinaria.MinutosBase minutos y @Formato.Moneda(CitaVeterinaria.TarifaMinutoAdicional) por cada minuto adicional. Por ejemplo, una consulta de 45 minutos cuesta @Formato.Moneda(CitaVeterinaria.CostoPara(45)).</p>
+                </details>
+                <details class="lp-tarjeta">
+                    <summary>¿Cómo se cobra la hospitalización?</summary>
+                    <p class="lp-apagado">Por día, según el tamaño de la jaula: @TarifasEnTexto. Se cobra mínimo un día.</p>
+                </details>
+                <details class="lp-tarjeta">
+                    <summary>¿Necesito cita?</summary>
+                    <p class="lp-apagado">Te recomendamos agendar por WhatsApp para que no tengas que esperar.</p>
+                </details>
+                <details class="lp-tarjeta">
+                    <summary>¿Qué pasa si cancelo?</summary>
+                    <p class="lp-apagado">Avísanos por WhatsApp. Una cita cancelada no se cobra.</p>
+                </details>
+            </div>
+        </section>
+
+        <section id="ubicacion" class="lp-ubicacion">
+            <div class="lp-contenedor lp-dos">
+                <div class="lp-ubicacion-datos">
+                    <h2>Te esperamos con calma</h2>
+                    <span>@Clinica.Direccion</span>
+                    <span>@Clinica.Horario</span>
+                    <span>WhatsApp @Clinica.TelefonoVisible</span>
+                    <a href="@Clinica.EnlaceMapa" target="_blank" rel="noopener">Ver en el mapa</a>
+                    <a class="lp-boton lp-boton-claro" href="@WhatsApp("Hola, quiero agendar una cita para mi mascota.")" target="_blank" rel="noopener">
+                        <IconoWhatsApp />
+                        Agendar cita
+                    </a>
+                </div>
+                <ImagenLanding Archivo="img-10-cierre.jpg" Clase="lp-revelar" Ancho="1400" Alto="788"
+                               Alt="Un perro y un gato duermen juntos sobre una manta junto a la ventana" />
+            </div>
+        </section>
+    </main>
+
+    <footer class="lp-contenedor lp-pie">
+        <span class="lp-apagado">© @DateTime.Today.Year @Clinica.Nombre · Clínica veterinaria</span>
+        <AccesoPersonal />
+    </footer>
+
+    <a class="lp-flotante" href="@WhatsApp("Hola, quiero agendar una cita para mi mascota.")" target="_blank" rel="noopener" aria-label="Agendar cita por WhatsApp">
+        <IconoWhatsApp Tamano="28" />
+    </a>
+</div>
+
+@code {
+    [Inject] private IOptions<OpcionesClinica> Opciones { get; set; } = default!;
+
+    private OpcionesClinica Clinica => Opciones.Value;
+
+    private string WhatsApp(string mensaje) => Clinica.EnlaceWhatsApp(mensaje);
+
+    private static string PrecioConsulta => Formato.Moneda(CitaVeterinaria.TarifaBase);
+
+    private static string TarifasEnTexto => string.Join(", ",
+        Enum.GetValues<TamanoJaula>().Select(t =>
+            $"{Formato.TextoTamano(t).ToLowerInvariant()} {Formato.Moneda(Jaula.TarifaDiaPara(t))}"));
+}
