@@ -223,7 +223,7 @@ Firma: ______
 
 ### Luis Toledo
 
-[Texto]
+En este trabajo comprendi la importancia de la programacion orientada a objetos comprendi que el uso de esta no es una desicion, es una buena practica que tiene que estar en nosotros para el uso diario en la programacion, no es algo que nosotros decidimos, es algo que debemos comprender para estar en el mundo laboral, es algo fundamental, su uso me ayudo a entender mas la programacion modular, hacer sistemas mas optimos para el mercado, cada pilar de la programacion orientada a objetos es de vital importancia para un ingeniero de software, no solo para su programacion, si no para su capacidad de analisis y interpretacion de las diferentes situaciones laborales, tales como el encapsulamiento o la capacidad de escoger entre lo mas complejo, lo mas importante, esta materia me fue de gran interes, porque gracias a eso a hora cuento con los fundamentos del Poo, y los voy a poner en practicar para siempre en todo mi desarrollo profesional como ingeniero de software, ofreciendo soluciones de alta calidad para las distintas empresas y problemas
 
 Documento: ______
 
